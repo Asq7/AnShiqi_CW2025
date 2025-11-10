@@ -3,7 +3,7 @@ package com.comp2042;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-public final class Score {
+public final class GameScore {
 
     private final IntegerProperty score = new SimpleIntegerProperty(0);
 
