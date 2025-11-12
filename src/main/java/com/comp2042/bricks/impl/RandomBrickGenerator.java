@@ -1,4 +1,8 @@
-package com.comp2042.logic.bricks;
+package com.comp2042.bricks.impl;
+
+import com.comp2042.bricks.Brick;
+import com.comp2042.bricks.BrickGenerator;
+import com.comp2042.logic.bricks.*;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
