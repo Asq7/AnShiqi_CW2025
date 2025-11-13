@@ -5,7 +5,6 @@ import com.comp2042.bricks.BrickGenerator;
 import com.comp2042.bricks.BrickRotator;
 import com.comp2042.bricks.ClearRow;
 import com.comp2042.bricks.impl.RandomBrickGenerator;
-import com.comp2042.model.MatrixOperations;
 import com.comp2042.model.NextShapeInfo;
 import com.comp2042.model.ViewData;
 
