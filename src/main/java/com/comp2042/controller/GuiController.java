@@ -26,6 +26,13 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * GUI Controller class responsible for managing the visual interface and user interaction of the Tetris game
+ * This class implements the game interface rendering and control through JavaFX
+ * @author AnShiqi
+ * @version 1.0
+ * @since 2025
+ */
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
@@ -42,6 +49,12 @@ public class GuiController implements Initializable {
     @FXML
     private GameOverPanel gameOverPanel;
 
+    //Add new member variables:nextBrickPanel,nextRectangles
+    @FXML
+    private GridPane nextBrickPanel;
+
+    private Rectangle[][] nextRectangles;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -54,6 +67,12 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    /**
+     * Initializes the controller after its root element has been processed
+     * Sets up the game panel focus, keyboard event handling, and loads the digital font
+     * @param location The location used to resolve relative paths for the root object, or null if the location is not known
+     * @param resources The resources used to localize the root object, or null if the root object was not localized
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -93,6 +112,11 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
+    /**
+     * Initializes the game view by creating and setting up the game board and brick panels
+     * @param boardMatrix the 2D array representing the game board state
+     * @param brick the ViewData object containing current brick information
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -116,6 +140,8 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
+        // Initialize the next-block preview area
+        initNextBrickPreview(brick.getNextBrickData());
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -125,6 +151,39 @@ public class GuiController implements Initializable {
         timeLine.play();
     }
 
+    /**
+     * Add a method to initialize the next-block preview
+     * @param nextBrickData
+     */
+    private void initNextBrickPreview(int[][] nextBrickData) {
+        nextRectangles = new Rectangle[nextBrickData.length][nextBrickData[0].length];
+        for (int i = 0; i < nextBrickData.length; i++) {
+            for (int j = 0; j < nextBrickData[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(getFillColor(nextBrickData[i][j]));
+                nextRectangles[i][j] = rectangle;
+                nextBrickPanel.add(rectangle, j, i);
+            }
+        }
+    }
+
+    /**
+     * Add a method to update preview
+     * @param nextBrickData
+     */
+    private void updateNextBrickPreview(int[][] nextBrickData) {
+        for (int i = 0; i < nextBrickData.length; i++) {
+            for (int j = 0; j < nextBrickData[i].length; j++) {
+                setRectangleData(nextBrickData[i][j], nextRectangles[i][j]);
+            }
+        }
+    }
+
+    /**
+     * Maps brick type identifiers to their corresponding fill colors
+     * @param i the brick type identifier (0-7)
+     * @return the Paint color corresponding to the brick type
+     */
     private Paint getFillColor(int i) {
         Paint returnPaint;
         switch (i) {
@@ -159,7 +218,10 @@ public class GuiController implements Initializable {
         return returnPaint;
     }
 
-
+    /**
+     * Refreshes the brick display position and data
+     * @param brick the ViewData object containing brick position, data and next brick data
+     */
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
@@ -169,9 +231,14 @@ public class GuiController implements Initializable {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
+            // Update preview of the next-block
+            updateNextBrickPreview(brick.getNextBrickData());
         }
     }
-
+    /**
+     * Refreshes the game background display by updating each rectangle's data
+     * @param board 2D array representing the game board state data
+     */
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -179,13 +246,21 @@ public class GuiController implements Initializable {
             }
         }
     }
-
+    /**
+     * Sets the fill color and rounded corners for a rectangle based on the color identifier
+     * @param color the color identifier (0-7) representing different brick types
+     * @param rectangle the Rectangle object to be updated
+     */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
     }
 
+    /**
+     * Handles the downward movement of the current brick and processes game logic
+     * @param event the MoveEvent containing information about the source of the movement (user or thread)
+     */
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
@@ -198,20 +273,34 @@ public class GuiController implements Initializable {
         }
         gamePanel.requestFocus();
     }
-
+    /**
+     * Sets the input event listener for handling user interactions
+     * @param eventListener the InputEventListener to be set
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * Binds the game score property to the UI display component
+     * @param integerProperty the score property to bind
+     */
     public void bindScore(IntegerProperty integerProperty) {
     }
 
+    /**
+     * Displays a game over message and stops the game
+     */
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
+    /**
+     * Starts a new game by resetting the game state and UI components
+     * @param actionEvent the ActionEvent that triggered this method (can be null)
+     */
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
@@ -221,7 +310,10 @@ public class GuiController implements Initializable {
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
-
+    /**
+     * Pauses the game by requesting focus on the game panel
+     * @param actionEvent the ActionEvent that triggered this method (can be null)
+     */
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
