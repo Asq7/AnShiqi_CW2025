@@ -1,5 +1,6 @@
-package com.comp2042.bricks;
+package com.comp2042.core;
 
+import com.comp2042.bricks.Brick;
 import com.comp2042.model.NextShapeInfo;
 
 public class BrickRotator {

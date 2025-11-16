@@ -1,6 +1,4 @@
-package com.comp2042.bricks;
-
-import com.comp2042.core.MatrixOperations;
+package com.comp2042.core;
 
 public final class ClearRow {
 

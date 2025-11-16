@@ -1,6 +1,6 @@
 package com.comp2042.model;
 
-import com.comp2042.bricks.ClearRow;
+import com.comp2042.core.ClearRow;
 
 public final class DownData {
     private final ClearRow clearRow;

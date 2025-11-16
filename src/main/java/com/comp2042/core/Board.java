@@ -1,6 +1,5 @@
 package com.comp2042.core;
 
-import com.comp2042.bricks.ClearRow;
 import com.comp2042.model.ViewData;
 
 public interface Board {

@@ -2,15 +2,13 @@ package com.comp2042.core;
 
 import com.comp2042.bricks.Brick;
 import com.comp2042.bricks.BrickGenerator;
-import com.comp2042.bricks.BrickRotator;
-import com.comp2042.bricks.ClearRow;
 import com.comp2042.bricks.impl.RandomBrickGenerator;
 import com.comp2042.model.NextShapeInfo;
 import com.comp2042.model.ViewData;
 
 import java.awt.*;
 
-public class SimpleBoard implements Board {
+public class GameBoard implements Board {
 
     private final int width;
     private final int height;
@@ -20,7 +18,7 @@ public class SimpleBoard implements Board {
     private Point currentOffset;
     private final GameScore gameScore;
 
-    public SimpleBoard(int width, int height) {
+    public GameBoard(int width, int height) {
         this.width = width;
         this.height = height;
         currentGameMatrix = new int[width][height];

@@ -1,16 +1,16 @@
 package com.comp2042.controller;
 
-import com.comp2042.bricks.ClearRow;
+import com.comp2042.core.ClearRow;
 import com.comp2042.core.Board;
-import com.comp2042.core.SimpleBoard;
+import com.comp2042.core.GameBoard;
 import com.comp2042.model.DownData;
 import com.comp2042.model.EventSource;
 import com.comp2042.model.MoveEvent;
 import com.comp2042.model.ViewData;
 
-public class GameController implements InputEventListener {
+public class GameController implements GameInputHandler {
 
-    private Board board = new SimpleBoard(25, 10);
+    private Board board = new GameBoard(25, 10);
 
     private final GuiController viewGuiController;
 

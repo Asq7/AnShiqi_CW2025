@@ -58,7 +58,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] displayMatrix;
 
-    private InputEventListener eventListener;
+    private GameInputHandler eventListener;
 
     private Rectangle[][] rectangles;
 
@@ -280,9 +280,9 @@ public class GuiController implements Initializable {
     }
     /**
      * Sets the input event listener for handling user interactions
-     * @param eventListener the InputEventListener to be set
+     * @param eventListener the GameInputHandler to be set
      */
-    public void setEventListener(InputEventListener eventListener) {
+    public void setEventListener(GameInputHandler eventListener) {
         this.eventListener = eventListener;
     }
 
