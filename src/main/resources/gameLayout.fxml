@@ -21,6 +21,9 @@
         </VBox>
     </Group>
 
+    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="150" layoutY="20"/>
+
+
     <VBox layoutX="12" layoutY="11">
         <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1" prefHeight="100" prefWidth="100"/>
     </VBox>

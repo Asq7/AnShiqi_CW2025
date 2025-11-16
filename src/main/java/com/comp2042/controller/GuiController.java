@@ -22,6 +22,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import javafx.scene.control.Label;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -66,6 +67,10 @@ public class GuiController implements Initializable {
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    @FXML
+    private Label scoreLabel;
+
 
     /**
      * Initializes the controller after its root element has been processed
@@ -286,6 +291,9 @@ public class GuiController implements Initializable {
      * @param integerProperty the score property to bind
      */
     public void bindScore(IntegerProperty integerProperty) {
+        if (scoreLabel != null) {
+            scoreLabel.textProperty().bind(integerProperty.asString());
+        }
     }
 
     /**
