@@ -10,12 +10,17 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Randomly generates bricks for the game
+ */
 public class RandomBrickGenerator implements BrickGenerator {
 
     private final List<Brick> brickList;
 
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
-
+    /**
+     * Constructor: initializes the list of bricks
+     */
     public RandomBrickGenerator() {
         brickList = new ArrayList<>();
         brickList.add(new IBrick());
@@ -28,7 +33,10 @@ public class RandomBrickGenerator implements BrickGenerator {
         nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
         //nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
     }
-
+    /**
+     * Returns a random brick from the list
+     * @return a random brick
+     */
     @Override
     public Brick getBrick() {
         if (nextBricks.size() <= 1) {
@@ -36,7 +44,10 @@ public class RandomBrickGenerator implements BrickGenerator {
         }
         return nextBricks.poll();
     }
-
+    /**
+     * Returns the next brick in the queue
+     * @return the next brick
+     */
     @Override
     public Brick getNextBrick() {
         return nextBricks.peek();

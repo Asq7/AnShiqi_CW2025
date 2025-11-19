@@ -67,6 +67,8 @@ resolve them.
 # 3. Refactoring重构
 ## (1) Class name refactoring (1)类名重构
 - Score.java--->GameScore.java
+- SimpleBoard.java --->GameBoard.java
+- InputEventListener.java --->GameInputHandler.java
 ## (2) Package path refactoring(2)包路径重构
 - Package path structure changed to: 包路径结构改为：   
 com.comp2042   
@@ -81,19 +83,19 @@ com.comp2042
 │   │   │   ├── TBrick.java   
 │   │   │   └── ZBrick.java   
 │   │   └── RandomBrickGenerator.java  
-│   ├── Brick.java  
-│   ├── BrickGenerator.java  
-│   ├── BrickRotator.java  
-│   └── ClearRow.java   
+│   ├── Brick.java
+│   └── BrickGenerator.java
 ├── controller   
 │   ├── GameController.java  
 │   ├── GuiController.java  
-│   └── InputEventListener.java  
+│   └── GameInputHandler.java
 ├── core   
 │   ├── Board.java  
 │   ├── GameScore.java   
 │   ├── MatrixOperations.java    
-│   └── SimpleBoard.java   
+│   ├── GameBoard.java  
+│   ├── BrickRotator.java   
+│   └── ClearRow.java    
 ├── model  
 │   ├── DownData.java    
 │   ├── EventSource.java  

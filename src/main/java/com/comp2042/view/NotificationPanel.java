@@ -13,9 +13,14 @@ import javafx.scene.effect.Glow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
+/**
+ * Panel that displays notification messages such as score bonuses in the game
+ */
 public class NotificationPanel extends BorderPane {
-
+    /**
+     * Constructs a NotificationPanel with the specified text message
+     * @param text the text to display in the notification
+     */
     public NotificationPanel(String text) {
         setMinHeight(200);
         setMinWidth(220);
@@ -28,6 +33,10 @@ public class NotificationPanel extends BorderPane {
 
     }
 
+    /**
+     * Shows the score notification with animation and removes it from the list when finished
+     * @param list the ObservableList of nodes to manage the panel's lifecycle
+     */
     public void showScore(ObservableList<Node> list) {
         FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);

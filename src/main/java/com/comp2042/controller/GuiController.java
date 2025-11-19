@@ -297,7 +297,7 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Displays a game over message and stops the game
+     * Displays a game over a message and stops the game
      */
     public void gameOver() {
         timeLine.stop();

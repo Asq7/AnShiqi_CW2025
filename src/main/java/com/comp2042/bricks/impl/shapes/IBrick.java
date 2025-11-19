@@ -6,8 +6,13 @@ import com.comp2042.bricks.Brick;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the I-shaped brick
+ */
 public final class IBrick implements Brick {
-
+    /**
+     * Initializes the I-brick with its two rotation states
+     */
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
     public IBrick() {
@@ -24,7 +29,10 @@ public final class IBrick implements Brick {
                 {0, 1, 0, 0}
         });
     }
-
+    /**
+     *Get the shape matrix list of the current brick
+     * @return Returns a deep copy list of brick matrices, each element represents a rotation state of the brick
+     */
     @Override
     public List<int[][]> getShapeMatrix() {
         return MatrixOperations.deepCopyList(brickMatrix);

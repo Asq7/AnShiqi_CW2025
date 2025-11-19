@@ -5,9 +5,13 @@ import com.comp2042.bricks.Brick;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Represents the Z-shaped brick
+ */
 public class ZBrick implements Brick {
-
+    /**
+     * Initializes the Z-brick with its two rotation states
+     */
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
     public ZBrick() {
@@ -24,7 +28,10 @@ public class ZBrick implements Brick {
                 {0, 0, 0, 0}
         });
     }
-
+    /**
+     *Get the shape matrix list of the current brick
+     * @return Returns a deep copy list of brick matrices, each element represents a rotation state of the brick
+     */
     @Override
     public List<int[][]> getShapeMatrix() {
         return MatrixOperations.deepCopyList(brickMatrix);

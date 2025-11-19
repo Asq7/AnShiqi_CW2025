@@ -5,15 +5,15 @@ import com.comp2042.bricks.Brick;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Represents the O-shaped brick
+ */
 public final class OBrick implements Brick {
 
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
     /**
-     * Constructor for OBrick initializes the brick matrix with the O-shaped tetromino pattern.
-     * The O-shape is a 2x2 square block represented in a 4x4 matrix.
-     * The pattern uses '4' to indicate filled cells and '0' for empty spaces.
+     * Initializes the O-brick with its rotation state
      */
     public OBrick() {
         brickMatrix.add(new int[][]{
@@ -23,10 +23,10 @@ public final class OBrick implements Brick {
                 {0, 0, 0, 0}
         });
     }
+
     /**
-     * 获取当前砖块的形状矩阵列表
-     *
-     * @return 返回砖块矩阵的深拷贝列表，每个元素代表砖块的一个旋转状态
+     *Get the shape matrix list of the current brick
+     * @return Returns a deep copy list of brick matrices, each element represents a rotation state of the brick
      */
     @Override
     public List<int[][]> getShapeMatrix() {
