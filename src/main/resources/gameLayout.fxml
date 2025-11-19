@@ -28,6 +28,10 @@
         <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1" prefHeight="100" prefWidth="100"/>
     </VBox>
 
+    <Button fx:id="pauseButton" text="Pause" layoutX="235" layoutY="120" onAction="#pauseGame"/>
+
+    <Button fx:id="newGameButton" text="NEW GAME" layoutX="235" layoutY="142" onAction="#newGame"/>
+
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>

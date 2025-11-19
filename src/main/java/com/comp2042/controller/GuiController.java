@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -53,6 +54,13 @@ public class GuiController implements Initializable {
     //Add new member variables:nextBrickPanel,nextRectangles
     @FXML
     private GridPane nextBrickPanel;
+
+    // add a button to pause
+    @FXML
+    private Button pauseButton;
+    //add a button to new game
+    @FXML
+    private Button newGameButton;
 
     private Rectangle[][] nextRectangles;
 
@@ -105,7 +113,10 @@ public class GuiController implements Initializable {
                     }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
+                    newGame(null);//can add button?
+                }
+                else if (keyEvent.getCode() == KeyCode.SPACE) {
+                    pauseGame(null);
                 }
             }
         });
@@ -319,10 +330,22 @@ public class GuiController implements Initializable {
         isGameOver.setValue(Boolean.FALSE);
     }
     /**
-     * Pauses the game by requesting focus on the game panel
+     * Pauses the game
      * @param actionEvent the ActionEvent that triggered this method (can be null)
      */
     public void pauseGame(ActionEvent actionEvent) {
+
+        if (isPause.getValue()) {
+            // pause
+            timeLine.play();
+            pauseButton.setText("PAUSE");
+            isPause.setValue(Boolean.FALSE);
+        } else {
+            // RESUME
+            timeLine.pause();
+            pauseButton.setText("RESUME");
+            isPause.setValue(Boolean.TRUE);
+        }
         gamePanel.requestFocus();
     }
 }
