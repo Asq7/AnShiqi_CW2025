@@ -21,7 +21,8 @@
         </VBox>
     </Group>
 
-    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="150" layoutY="20"/>
+    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="185" layoutY="60"/>
+    <Label fx:id="scoreLabelText" text="SCORE:" layoutX="115" layoutY="60" styleClass="scoreClass"/>
 
 
     <VBox layoutX="12" layoutY="11">
@@ -31,6 +32,9 @@
     <Button fx:id="pauseButton" text="Pause" layoutX="235" layoutY="120" onAction="#pauseGame"/>
 
     <Button fx:id="newGameButton" text="NEW GAME" layoutX="235" layoutY="142" onAction="#newGame"/>
+
+    <Label fx:id="levelLabel" text="1" layoutX="185" layoutY="30" styleClass="scoreClass"/>
+    <Label fx:id="levelLabelText" text="LEVEL:" layoutX="115" layoutY="30" styleClass="scoreClass"/>
 
     <stylesheets>
         <URL value="@window_style.css"/>

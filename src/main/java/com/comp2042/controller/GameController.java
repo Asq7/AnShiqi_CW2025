@@ -7,6 +7,8 @@ import com.comp2042.model.DownData;
 import com.comp2042.model.EventSource;
 import com.comp2042.model.MoveEvent;
 import com.comp2042.model.ViewData;
+import javafx.beans.property.IntegerProperty;
+
 /**
  * The controller class for the game
  * GameController handles game logic and acts as intermediary between model and view
@@ -90,5 +92,16 @@ public class GameController implements GameInputHandler {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+    }
+    /**
+     * Binds the level property to the view controller
+     * @param levelProperty The level property to bind
+     */
+    public void bindLevel(IntegerProperty levelProperty) {
+        viewGuiController.bindLevel(levelProperty);
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

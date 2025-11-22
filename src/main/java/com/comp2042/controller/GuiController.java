@@ -1,5 +1,6 @@
 package com.comp2042.controller;
 
+import com.comp2042.core.Board;
 import com.comp2042.model.*;
 import com.comp2042.view.GameOverPanel;
 import com.comp2042.view.NotificationPanel;
@@ -38,6 +39,9 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    @FXML
+    public Label levelLabelText;
+    public Label scoreLabelText;
 
     @FXML
     private GridPane gamePanel;
@@ -61,6 +65,9 @@ public class GuiController implements Initializable {
     //add a button to new game
     @FXML
     private Button newGameButton;
+
+    @FXML
+    private Label levelLabel;
 
     private Rectangle[][] nextRectangles;
 
@@ -119,6 +126,7 @@ public class GuiController implements Initializable {
                     pauseGame(null);
                 }
             }
+
         });
         gameOverPanel.setVisible(false);
 
@@ -126,6 +134,15 @@ public class GuiController implements Initializable {
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+    }
+    /**
+     * Binds the level property to the level label
+     * @param levelProperty the IntegerProperty representing the level
+     */
+    public void bindLevel(IntegerProperty levelProperty) {
+        if (levelLabel != null) {
+            levelLabel.textProperty().bind(levelProperty.asString());
+        }
     }
 
     /**
@@ -160,11 +177,29 @@ public class GuiController implements Initializable {
         initNextBrickPreview(brick.getNextBrickData());
 
         timeLine = new Timeline(new KeyFrame(
-                Duration.millis(400),
+                Duration.millis(700), // LEVEL1 SPEED
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
+        Board board=((GameController) eventListener).getBoard();
+        board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
+            if (timeLine != null) {
+                timeLine.stop();
+                timeLine.getKeyFrames().clear();
+
+                // 随着关卡提高，速度加快 (最低200ms)
+                    long speed = Math.max(200, 700 - (newValue.intValue()- 1) * 150);
+                timeLine.getKeyFrames().add(new KeyFrame(
+                        Duration.millis(speed),
+                        ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+                ));
+                timeLine.play();
+            }
+        });
         timeLine.play();
+
+
+        ((GameController) eventListener).bindLevel(board.getScore().levelProperty());
     }
 
     /**

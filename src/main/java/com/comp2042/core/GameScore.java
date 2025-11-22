@@ -6,11 +6,9 @@ import javafx.beans.property.SimpleIntegerProperty;
  * Represents the game score management system using JavaFX properties
  */
 public final class GameScore {
-    /**
-     * Gets the score property for binding to UI components
-     * @return the IntegerProperty representing the current score
-     */
+
     private final IntegerProperty score = new SimpleIntegerProperty(0);
+    private final IntegerProperty level = new SimpleIntegerProperty(1);
     /**
      * Gets the score property for binding to UI components
      * @return the IntegerProperty representing the current score
@@ -18,13 +16,32 @@ public final class GameScore {
     public IntegerProperty scoreProperty() {
         return score;
     }
+    /**
+     * Gets the level property for binding to UI components
+     * @return the IntegerProperty representing the current level
+     */
+    public int getLevel() {
+        return level.get();
+    }
+    /**
+     * Gets the level property for binding to UI components
+     * @return the IntegerProperty representing the current level
+     */
+    public IntegerProperty levelProperty() {
+        return level;
+    }
 
     /**
-     * Adds points to the current score
-     * @param i the number of points to add
+     * Adds the specified points to the score
      */
-    public void add(int i){
-        score.setValue(score.getValue() + i);
+    public void add(int points) {
+        int oldScore = score.get();
+        score.setValue(oldScore + points);
+
+        int newLevel = (oldScore+points) / 100 + 1;
+        if (newLevel > level.get()) {
+            level.set(newLevel);
+        }
     }
     /**
      * Resets the score to zero
