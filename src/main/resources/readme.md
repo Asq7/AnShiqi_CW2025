@@ -2,14 +2,9 @@
 * https://github.com/kooitt/CW2025.git
 
 # 2.**Compilation Instructions:**
-Provide a clear, step-by-step guide on how to compile the
-code to produce the application. Include any dependencies or special settings
-required.
 编译说明：提供清晰的分步指南，说明如何编译代码生成应用程序，包括所需的依赖项或特殊设置。
 
 # 3.Implemented and Working Properly: 
-List the features that have been successfully
-implemented and are functioning as expected. Provide a brief description of each.
 已实现且运行正常的功能：列出成功实现并按预期运行的功能，简要描述每项功能。
 ## (1)Add preview feature增加预览功能 
 * brief description：Add a preview of the next block in the empty area at the top-left corner of the game screen.
@@ -26,36 +21,63 @@ GuiController.java:import javafx.scene.control.Label to use;
 Add private Label scoreLabel;
 In the bindScore method, add a bind between the scoreLabel and integerProperty to enable real-time score updates.
 ## (3)Add pause/resume functionality增加暂停pause/恢复resume功能
-## (4)Add restart functionality增加重新开始功能
+* brief description：Add a pause/resume functionality to the game. Press the space or click the button can pause/resume the game.
+* Modified Java Classes：
+GuiController.java:import javafx.scene.control.Button to use; Add a button to the game screen; Add a method to the button to pause/resume the game.
+## (4)Add restart functionality(button)增加重新开始功能
+* brief description：Add a clickable button：click to start a new game.(Initially there was no button, players can only press "N" to restart)
+* Modified Java Classes：
+GuiController.java: add: else if (keyEvent.getCode() == KeyCode.SPACE) { pauseGame(null);}
 ## (5)Add level mode增加关卡模式
 * When the accumulated score reaches a certain value, proceed to the next level (increase speed)累计分数到某个分值时，进入下一关（加快速度）
+* Modified Java Classes：
+GameScore.java:Add level-related logic to the GameScore class: level up when reach a certain score
+GuiController.java: Modify GuiController to display level information:
+  add a level label reference in the GuiController class;
+  modify the initialize method to bind the level property;
+  update the initGameView method to invoke level binding;
+  Adjust game speed based on level;
+  Modify the timeline configuration in GuiController;
+GameController.java: Add a level binding method in the GameController class
+
 * **Level up升级**
 
-# Implemented but Not Working Properly: 
+# 4.Implemented but Not Working Properly: 
 List any features that have been
 implemented but are not working correctly. Explain the issues you encountered,
 and if possible, the steps you took to address them.
 已实现但运行异常的功能：列出已实现但无法正常运行的功能，说明遇到的问题及（若有）尝试解决的步骤。
 
-# Features Not Implemented: 
+# 5.Features Not Implemented: 
 Identify any features that you were unable to
 implement and provide a clear explanation for why they were left out.
 未实现的功能：明确未完成的功能，并清晰解释未实现的原因。
 
-# New Java Classes: 
+# 6.New Java Classes: 
 Enumerate any new Java classes that you introduced for the
 assignment. Include a brief description of each class's purpose and its location in the
 code.
 新增 Java 类：列举为完成作业新增的所有 Java 类，简要描述每个类的用途及其在代码中的位置。
 
-# Modified Java Classes: 
+
+
+
+# 7.Modified Java Classes: 
 Modified Java Classes:
 List the Java classes you modified from the provided code
 base. Describe the changes you made and explain why these modifications were
 necessary.
 修改的 Java 类：列出对提供的代码库中已有的 Java 类所做的修改，描述修改内容并说明修改的必要性。（包括BUG修复（代码重构
+rename class: 
+- Score.java--->GameScore.java
+- SimpleBoard.java --->GameBoard.java
+- InputEventListener.java --->GameInputHandler.java
 
-# Unexpected Problems: 
+  Delete line 25 of RandomBrickGenerator.java (reason:repeat)
+- 
+
+
+# 8.Unexpected Problems: 
 Communicate any unexpected challenges or issues you
 encountered during the assignment. Describe how you addressed or attempted to
 resolve them.

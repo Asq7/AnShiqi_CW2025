@@ -130,10 +130,10 @@ public class GuiController implements Initializable {
         });
         gameOverPanel.setVisible(false);
 
-        final Reflection reflection = new Reflection();
-        reflection.setFraction(0.8);
-        reflection.setTopOpacity(0.9);
-        reflection.setTopOffset(-12);
+//        final Reflection reflection = new Reflection();
+//        reflection.setFraction(0.5);
+//        reflection.setTopOpacity(0.7);
+//        reflection.setTopOffset(-12);
     }
     /**
      * Binds the level property to the level label
@@ -142,6 +142,17 @@ public class GuiController implements Initializable {
     public void bindLevel(IntegerProperty levelProperty) {
         if (levelLabel != null) {
             levelLabel.textProperty().bind(levelProperty.asString());
+        }
+    }
+
+    private void initBrickPanel(Rectangle[][] rectangles,GridPane brickPanel ,int[][] brickData) {
+        for (int i = 0; i < brickData.length; i++) {
+            for (int j = 0; j < brickData[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(getFillColor(brickData[i][j]));
+                rectangles[i][j] = rectangle;
+                brickPanel.add(rectangle, j, i);
+            }
         }
     }
 
@@ -162,19 +173,20 @@ public class GuiController implements Initializable {
         }
 
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
-                rectangles[i][j] = rectangle;
-                brickPanel.add(rectangle, j, i);
-            }
-        }
+        initBrickPanel(rectangles, brickPanel, brick.getBrickData());
+//        for (int i = 0; i < brick.getBrickData().length; i++) {
+//            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+//                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+//                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
+//                rectangles[i][j] = rectangle;
+//                brickPanel.add(rectangle, j, i);
+//            }
+//        }
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
         // Initialize the next-block preview area
-        initNextBrickPreview(brick.getNextBrickData());
+        initNextBrickPreview(brick.getNextBrickData());//函数的代码逻辑和上面重复
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(700), // LEVEL1 SPEED
@@ -203,20 +215,21 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Add a method to initialize the next-block preview
+     * Initializes the next-block preview area
      * @param nextBrickData
      */
     private void initNextBrickPreview(int[][] nextBrickData) {
         nextRectangles = new Rectangle[nextBrickData.length][nextBrickData[0].length];
-        for (int i = 0; i < nextBrickData.length; i++) {
-            for (int j = 0; j < nextBrickData[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(getFillColor(nextBrickData[i][j]));
-                nextRectangles[i][j] = rectangle;
-                nextBrickPanel.add(rectangle, j, i);
-            }
-        }
-    }
+        initBrickPanel(nextRectangles, nextBrickPanel, nextBrickData);
+//        for (int i = 0; i < nextBrickData.length; i++) {
+//            for (int j = 0; j < nextBrickData[i].length; j++) {
+//                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+//                rectangle.setFill(getFillColor(nextBrickData[i][j]));
+//                nextRectangles[i][j] = rectangle;
+//                nextBrickPanel.add(rectangle, j, i);
+//            }
+//        }
+    }//Duplicate Code
 
     /**
      * Add a method to update preview
@@ -236,37 +249,18 @@ public class GuiController implements Initializable {
      * @return the Paint color corresponding to the brick type
      */
     private Paint getFillColor(int i) {
-        Paint returnPaint;
-        switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
-        }
-        return returnPaint;
+        return switch (i) {
+            case 0 -> Color.TRANSPARENT;
+            case 1 -> Color.AQUA;
+            case 2 -> Color.BLUEVIOLET;
+            case 3 -> Color.DARKGREEN;
+            case 4 -> Color.YELLOW;
+            case 5 -> Color.RED;
+            case 6 -> Color.BEIGE;
+            case 7 -> Color.BURLYWOOD;
+            default -> Color.WHITE;
+        };
+        //return returnPaint;
     }
 
     /**
