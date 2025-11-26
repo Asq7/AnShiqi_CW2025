@@ -74,7 +74,247 @@ rename class:
 - InputEventListener.java --->GameInputHandler.java
 
   Delete line 25 of RandomBrickGenerator.java (reason:repeat)
-- 
+
+- Refactor code in GuiController:   
+
+  **1.DELETE CODE FOR REFLECTION：(I don't want reflection)**
+  final Reflection reflection = new Reflection();
+  reflection.setFraction(0.8);
+  reflection.setTopOpacity(0.9);
+  reflection.setTopOffset(-12);
+    
+  **2.modify Duplicate Code---logic of for loop**
+- Code Smell（原文）：
+- {Duplicate Code
+  Code blocks that appear multiple times across a project.
+  Symptoms:
+  • Same logic copied in different classes or methods
+  • Minor variations in repeated code
+  Consequences:
+  • Bug fixes or updates must be applied multiple times
+  • Increases the chance of inconsistent behavior
+  • Makes maintenance harder
+  Refactoring Techniques:
+  • Extract Method: Create a shared method to replace repeated logic
+  • Pull Up Method: Move shared methods to a common superclass}
+
+    ADD NEW METHOD initBrickPanel:
+  private void initBrickPanel(Rectangle[][] rectangles,GridPane brickPanel ,int[][] brickData) {
+  for (int i = 0; i < brickData.length; i++) {
+  for (int j = 0; j < brickData[i].length; j++) {
+  Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+  rectangle.setFill(getFillColor(brickData[i][j]));
+  rectangles[i][j] = rectangle;
+  brickPanel.add(rectangle, j, i);
+  }
+  }
+  }
+    TO REPLACE:
+  private void initNextBrickPreview(int[][] nextBrickData) {
+  nextRectangles = new Rectangle[nextBrickData.length][nextBrickData[0].length];
+  for (int i = 0; i < nextBrickData.length; i++) {
+  for (int j = 0; j < nextBrickData[i].length; j++) {
+  Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+  rectangle.setFill(getFillColor(nextBrickData[i][j]));
+  nextRectangles[i][j] = rectangle;
+  nextBrickPanel.add(rectangle, j, i);
+  }
+  }
+  }
+    AND REPLACE:
+  for (int i = 0; i < brick.getBrickData().length; i++) {
+  for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+  Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+  rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
+  rectangles[i][j] = rectangle;
+  brickPanel.add(rectangle, j, i);
+  }
+  }
+（ADD：initBrickPanel(rectangles, brickPanel, brick.getBrickData());）
+
+  REPLACE:  
+- initNextBrickPreview(brick.getNextBrickData()); 
+- private void initNextBrickPreview(int[][] nextBrickData)
+  AS:  
+  nextRectangles = new Rectangle[brick.getNextBrickData().length][brick.getNextBrickData()[0].length];  
+  initBrickPanel(nextRectangles, nextBrickPanel, brick.getNextBrickData());  
+
+
+  **3.modify Complex Conditionals---Long switch statements(getFillColor);**
+  - Code Smell（原文）：
+  {Complex Conditionals
+    Long if–else or switch statements that are hard to read and maintain.
+    Symptoms:
+    • Multiple nested conditions
+    • Repeated code within branches
+    • Difficult to predict all possible outcomes
+    Consequences:
+    • Hard to understand and modify logic
+    • Likely to introduce errors when updating conditions
+    • Can violate the Open/Closed Principle
+    Refactoring Techniques:
+    • Replace Conditional with Polymorphism: Use subclasses or strategy patterns to handle
+    variations
+    • Extract Method: Move conditional branches into descriptive methods}
+  
+REPLACE:
+  -  Paint returnPaint;
+     switch (i) {
+     case 0:
+     returnPaint = Color.TRANSPARENT;
+     break;
+     case 1:
+     returnPaint = Color.AQUA;
+     break;
+     case 2:
+     returnPaint = Color.BLUEVIOLET;
+     break;
+     case 3:
+     returnPaint = Color.DARKGREEN;
+     break;
+     case 4:
+     returnPaint = Color.YELLOW;
+     break;
+     case 5:
+     returnPaint = Color.RED;
+     break;
+     case 6:
+     returnPaint = Color.BEIGE;
+     break;
+     case 7:
+     returnPaint = Color.BURLYWOOD;
+     break;
+     default:
+     returnPaint = Color.WHITE;
+     break;
+     }
+     return returnPaint;
+  WITH:
+     return switch (i) {
+     case 0 -> Color.TRANSPARENT;
+     case 1 -> Color.AQUA;
+     case 2 -> Color.BLUEVIOLET;
+     case 3 -> Color.DARKGREEN;
+     case 4 -> Color.YELLOW;
+     case 5 -> Color.RED;
+     case 6 -> Color.BEIGE;
+     case 7 -> Color.BURLYWOOD;
+     default -> Color.WHITE;
+     };
+     //return returnPaint;
+
+ **4.modify Long Method**    
+- Code Smell（原文）：
+{Long Method
+A long method tries to do too much in a single block of code.
+Symptoms:
+• Multiple responsibilities handled in one method
+• Many nested loops or conditional statements
+• Hard to understand at a glance
+Consequences:
+• Difficult to maintain or modify
+• Higher likelihood of introducing bugs when changing the code
+• Harder to test individual pieces of logic
+Refactoring Techniques:
+• Extract Method: Break the method into smaller, focused methods.
+• Replace Temp with Query: Use descriptive methods instead of temporary variables.}
+
+REPLACE:
+public void initialize(URL location, ResourceBundle resources) {
+Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+gamePanel.setFocusTraversable(true);
+gamePanel.requestFocus();
+gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
+@Override
+public void handle(KeyEvent keyEvent) {
+if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+keyEvent.consume();
+}
+if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+keyEvent.consume();
+}
+if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+keyEvent.consume();
+}
+if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+keyEvent.consume();
+}
+}
+if (keyEvent.getCode() == KeyCode.N) {
+newGame(null);//can add button?
+}
+else if (keyEvent.getCode() == KeyCode.SPACE) {
+pauseGame(null);
+}
+}
+});
+gameOverPanel.setVisible(false);
+
+AS；
+     @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        loadDigitalFont();
+        setupGamePanelFocus();
+        setupKeyboardControls();
+        initializeGameOverPanel();
+    }
+    private void loadDigitalFont() {
+        Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+    }
+    private void setupGamePanelFocus() {
+        gamePanel.setFocusTraversable(true);
+        gamePanel.requestFocus();
+    }
+    private void setupKeyboardControls() {
+        gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+                    handleGameplayKeys(keyEvent);
+                }
+                if (keyEvent.getCode() == KeyCode.N) {
+                    newGame(null);
+                    keyEvent.consume();
+                } else if (keyEvent.getCode() == KeyCode.SPACE) {
+                    pauseGame(null);
+                    keyEvent.consume();
+                }
+            }
+        });
+    }
+    private void handleGameplayKeys(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+            refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+            refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+            refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+            moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+            keyEvent.consume();
+        }
+    }
+    private void initializeGameOverPanel() {
+        gameOverPanel.setVisible(false);
+    }
+【The current initialize() method takes on excessive responsibilities. Split it into multiple smaller methods to improve readability and maintainability.
+Current Issues:The initialize() method encompasses several unrelated responsibilities:
+Loading font resources
+Setting focus for the game panel
+Configuring keyboard event handlers
+Initializing the state of the game over panel
+Refactoring:Split the initialize() method into multiple small methods with single responsibilities】
 
 
 # 8.Unexpected Problems: 
@@ -142,8 +382,6 @@ To set the package path structure according to functional layers:按功能分层
 - core层：包含游戏核心业务逻辑
 - model层：包含数据模型类
 - view层：负责用户界面组件
-
-## (3)代码重构
 
 
 

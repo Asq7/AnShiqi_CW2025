@@ -88,53 +88,83 @@ public class GuiController implements Initializable {
 
 
     /**
-     * Initializes the controller after its root element has been processed
-     * Sets up the game panel focus, keyboard event handling, and loads the digital font
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known
-     * @param resources The resources used to localize the root object, or null if the root object was not localized
+     * Initializes the controller and sets up the game panel
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        loadDigitalFont();
+        setupGamePanelFocus();
+        setupKeyboardControls();
+        initializeGameOverPanel();
+    }
+
+    /**
+     * Loads the digital font for UI elements
+     */
+    private void loadDigitalFont() {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+    }
+
+    /**
+     * Sets up the game panel focus properties
+     */
+    private void setupGamePanelFocus() {
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
+    }
+
+    /**
+     * Configures keyboard event handling for game controls
+     */
+    private void setupKeyboardControls() {
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
-                    if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                        refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                        refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                        moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
-                        keyEvent.consume();
-                    }
+                    handleGameplayKeys(keyEvent);
                 }
+
                 if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);//can add button?
-                }
-                else if (keyEvent.getCode() == KeyCode.SPACE) {
+                    newGame(null);
+                    keyEvent.consume();
+                } else if (keyEvent.getCode() == KeyCode.SPACE) {
                     pauseGame(null);
+                    keyEvent.consume();
                 }
             }
-
         });
-        gameOverPanel.setVisible(false);
-
-//        final Reflection reflection = new Reflection();
-//        reflection.setFraction(0.5);
-//        reflection.setTopOpacity(0.7);
-//        reflection.setTopOffset(-12);
     }
+
+    /**
+     * Handles gameplay-related keyboard inputs
+     */
+    private void handleGameplayKeys(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+            refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+            refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+            refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+            keyEvent.consume();
+        }
+        if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+            moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+            keyEvent.consume();
+        }
+    }
+
+
+    /**
+     * Initializes the game over panel visibility
+     */
+    private void initializeGameOverPanel() {
+        gameOverPanel.setVisible(false);
+    }
+
     /**
      * Binds the level property to the level label
      * @param levelProperty the IntegerProperty representing the level
@@ -186,7 +216,9 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
         // Initialize the next-block preview area
-        initNextBrickPreview(brick.getNextBrickData());//函数的代码逻辑和上面重复
+//      initNextBrickPreview(brick.getNextBrickData());//函数的代码逻辑和上面重复
+        nextRectangles = new Rectangle[brick.getNextBrickData().length][brick.getNextBrickData()[0].length];
+        initBrickPanel(nextRectangles, nextBrickPanel, brick.getNextBrickData());
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(700), // LEVEL1 SPEED
@@ -214,13 +246,11 @@ public class GuiController implements Initializable {
         ((GameController) eventListener).bindLevel(board.getScore().levelProperty());
     }
 
-    /**
-     * Initializes the next-block preview area
-     * @param nextBrickData
-     */
-    private void initNextBrickPreview(int[][] nextBrickData) {
-        nextRectangles = new Rectangle[nextBrickData.length][nextBrickData[0].length];
-        initBrickPanel(nextRectangles, nextBrickPanel, nextBrickData);
+//    /**
+//     * Initializes the next-block preview area
+//     * @param nextBrickData
+//     */
+//    private void initNextBrickPreview(int[][] nextBrickData) {
 //        for (int i = 0; i < nextBrickData.length; i++) {
 //            for (int j = 0; j < nextBrickData[i].length; j++) {
 //                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
@@ -229,7 +259,7 @@ public class GuiController implements Initializable {
 //                nextBrickPanel.add(rectangle, j, i);
 //            }
 //        }
-    }//Duplicate Code
+//    }//Duplicate Code
 
     /**
      * Add a method to update preview
