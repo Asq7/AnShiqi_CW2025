@@ -39,6 +39,11 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    private static final int BRICK_PANEL_Y_OFFSET = -42;
+    private static final int INITIAL_SPEED = 700;
+    private static final int MIN_SPEED = 200;
+    private static final int SPEED_DECREMENT_PER_LEVEL = 150;
+    private static final int ARC_RADIUS = 9;
     @FXML
     public Label levelLabelText;
     public Label scoreLabelText;
@@ -213,7 +218,7 @@ public class GuiController implements Initializable {
 //            }
 //        }
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
         // Initialize the next-block preview area
 //      initNextBrickPreview(brick.getNextBrickData());//函数的代码逻辑和上面重复
@@ -221,18 +226,18 @@ public class GuiController implements Initializable {
         initBrickPanel(nextRectangles, nextBrickPanel, brick.getNextBrickData());
 
         timeLine = new Timeline(new KeyFrame(
-                Duration.millis(700), // LEVEL1 SPEED
+                Duration.millis(INITIAL_SPEED), // LEVEL1 SPEED
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
-        Board board=((GameController) eventListener).getBoard();
+        Board board=eventListener.getBoard();
         board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
             if (timeLine != null) {
                 timeLine.stop();
                 timeLine.getKeyFrames().clear();
 
-                // 随着关卡提高，速度加快 (最低200ms)
-                    long speed = Math.max(200, 700 - (newValue.intValue()- 1) * 150);
+                // SPEED UP WITH LEVEL UP(MIN200ms)
+                    long speed = Math.max(MIN_SPEED, INITIAL_SPEED - (newValue.intValue()- 1) * SPEED_DECREMENT_PER_LEVEL);
                 timeLine.getKeyFrames().add(new KeyFrame(
                         Duration.millis(speed),
                         ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -243,7 +248,7 @@ public class GuiController implements Initializable {
         timeLine.play();
 
 
-        ((GameController) eventListener).bindLevel(board.getScore().levelProperty());
+        eventListener.bindLevel(board.getScore().levelProperty());
     }
 
 //    /**
@@ -328,8 +333,8 @@ public class GuiController implements Initializable {
      */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
+        rectangle.setArcHeight(ARC_RADIUS);
+        rectangle.setArcWidth(ARC_RADIUS);
     }
 
     /**

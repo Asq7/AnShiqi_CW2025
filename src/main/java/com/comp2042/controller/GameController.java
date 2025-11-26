@@ -97,10 +97,11 @@ public class GameController implements GameInputHandler {
      * Binds the level property to the view controller
      * @param levelProperty The level property to bind
      */
+    @Override
     public void bindLevel(IntegerProperty levelProperty) {
         viewGuiController.bindLevel(levelProperty);
     }
-
+    @Override
     public Board getBoard() {
         return board;
     }

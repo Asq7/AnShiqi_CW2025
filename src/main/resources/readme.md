@@ -316,6 +316,8 @@ Configuring keyboard event handlers
 Initializing the state of the game over panel
 Refactoring:Split the initialize() method into multiple small methods with single responsibilities】
 
+**5.Define constants used as named constants with descriptive identifiers.**
+**6.FIX Tight Coupling:getBoard bindLevel(27hao lingchen)**
 
 # 8.Unexpected Problems: 
 Communicate any unexpected challenges or issues you

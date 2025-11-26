@@ -1,8 +1,11 @@
 package com.comp2042.controller;
 
+import com.comp2042.core.Board;
 import com.comp2042.model.DownData;
 import com.comp2042.model.MoveEvent;
 import com.comp2042.model.ViewData;
+import javafx.beans.property.IntegerProperty;
+
 /**
  * Interface for the game input handler
  */
@@ -35,4 +38,14 @@ public interface GameInputHandler {
      * Creates a new game
      */
     void createNewGame();
+    /**
+     * Gets the board
+     * @return The board
+     **/
+    Board getBoard();
+    /**
+     * Binds the level property to the view controller
+     * @param levelProperty The level property to bind
+     */
+    void bindLevel(IntegerProperty levelProperty);
 }
