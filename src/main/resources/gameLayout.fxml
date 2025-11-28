@@ -21,20 +21,30 @@
         </VBox>
     </Group>
 
-    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="185" layoutY="60"/>
-    <Label fx:id="scoreLabelText" text="SCORE:" layoutX="115" layoutY="60" styleClass="scoreClass"/>
+    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="85" layoutY="60"/>
+    <Label fx:id="scoreLabelText" text="SCORE:" layoutX="15" layoutY="60" styleClass="scoreClass"/>
 
 
-    <VBox layoutX="12" layoutY="11">
-        <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1" prefHeight="100" prefWidth="100"/>
+
+    <VBox layoutX="240" layoutY="1" spacing="5">
+        <children>
+            <!-- 为整个预览区域添加外框 -->
+            <Pane style="-fx-border-color: whitesmoke; -fx-border-width: 2px; -fx-border-radius: 17px; -fx-padding: 5;">
+                <VBox spacing="5">
+                    <GridPane fx:id="nextBrickPanel1" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                    <GridPane fx:id="nextBrickPanel2" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                    <GridPane fx:id="nextBrickPanel3" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                </VBox>
+            </Pane>
+        </children>
     </VBox>
 
-    <Button fx:id="pauseButton" text="Pause" layoutX="235" layoutY="120" onAction="#pauseGame"/>
+    <Button fx:id="pauseButton" text="Pause" layoutX="235" layoutY="420" onAction="#pauseGame"/>
 
-    <Button fx:id="newGameButton" text="NEW GAME" layoutX="235" layoutY="142" onAction="#newGame"/>
+    <Button fx:id="newGameButton" text="NEW GAME" layoutX="235" layoutY="442" onAction="#newGame"/>
 
-    <Label fx:id="levelLabel" text="1" layoutX="185" layoutY="30" styleClass="scoreClass"/>
-    <Label fx:id="levelLabelText" text="LEVEL:" layoutX="115" layoutY="30" styleClass="scoreClass"/>
+    <Label fx:id="levelLabel" text="1" layoutX="85" layoutY="30" styleClass="scoreClass"/>
+    <Label fx:id="levelLabelText" text="LEVEL:" layoutX="15" layoutY="30" styleClass="scoreClass"/>
 
     <stylesheets>
         <URL value="@window_style.css"/>

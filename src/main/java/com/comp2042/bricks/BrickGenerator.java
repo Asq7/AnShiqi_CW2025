@@ -11,4 +11,6 @@ public interface BrickGenerator {
      * @return brick
      */
     Brick getNextBrick();
+    Brick getNextBrick(int position);
 }
+

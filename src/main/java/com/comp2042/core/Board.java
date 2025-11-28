@@ -61,4 +61,5 @@ public interface Board {
      * Resets the board and starts a new game.
      */
     void newGame();
+    int[][] getNextBrickData(int position);
 }

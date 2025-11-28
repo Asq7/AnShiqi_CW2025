@@ -60,9 +60,13 @@ public class GuiController implements Initializable {
     @FXML
     private GameOverPanel gameOverPanel;
 
-    //Add new member variables:nextBrickPanel,nextRectangles
+
     @FXML
-    private GridPane nextBrickPanel;
+    private GridPane nextBrickPanel1;
+    @FXML
+    private GridPane nextBrickPanel2;
+    @FXML
+    private GridPane nextBrickPanel3;
 
     // add a button to pause
     @FXML
@@ -75,6 +79,9 @@ public class GuiController implements Initializable {
     private Label levelLabel;
 
     private Rectangle[][] nextRectangles;
+    private Rectangle[][] nextRectangles1;
+    private Rectangle[][] nextRectangles2;
+    private Rectangle[][] nextRectangles3;
 
     private Rectangle[][] displayMatrix;
 
@@ -209,21 +216,12 @@ public class GuiController implements Initializable {
 
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         initBrickPanel(rectangles, brickPanel, brick.getBrickData());
-//        for (int i = 0; i < brick.getBrickData().length; i++) {
-//            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-//                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-//                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
-//                rectangles[i][j] = rectangle;
-//                brickPanel.add(rectangle, j, i);
-//            }
-//        }
+
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
-        // Initialize the next-block preview area
-//      initNextBrickPreview(brick.getNextBrickData());//函数的代码逻辑和上面重复
-        nextRectangles = new Rectangle[brick.getNextBrickData().length][brick.getNextBrickData()[0].length];
-        initBrickPanel(nextRectangles, nextBrickPanel, brick.getNextBrickData());
+        initThreeNextBrickPreviews(brick);
+
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(INITIAL_SPEED), // LEVEL1 SPEED
@@ -251,6 +249,51 @@ public class GuiController implements Initializable {
         eventListener.bindLevel(board.getScore().levelProperty());
     }
 
+    /**
+     * Initializes the three next brick previews
+     */
+    private void initThreeNextBrickPreviews(ViewData brick) {
+        // Clear preview panels
+        nextBrickPanel1.getChildren().clear();
+        nextBrickPanel2.getChildren().clear();
+        nextBrickPanel3.getChildren().clear();
+
+        // Initialize first preview (current next brick)
+        int[][] nextBrickData1 = brick.getNextBrickData();
+        if (nextBrickData1.length > 0 && nextBrickData1[0].length > 0) {
+            nextRectangles1 = new Rectangle[nextBrickData1.length][nextBrickData1[0].length];
+            initBrickPanel(nextRectangles1, nextBrickPanel1, nextBrickData1);
+        }
+
+        // Initialize second preview (the brick after next)
+        int[][] nextBrickData2 = getNextBrickNData(2);
+        if (nextBrickData2.length > 0 && nextBrickData2[0].length > 0) {
+            nextRectangles2 = new Rectangle[nextBrickData2.length][nextBrickData2[0].length];
+            initBrickPanel(nextRectangles2, nextBrickPanel2, nextBrickData2);
+        }
+
+        // Initialize third preview (third upcoming brick)
+        int[][] nextBrickData3 = getNextBrickNData(3);
+        if (nextBrickData3.length > 0 && nextBrickData3[0].length > 0) {
+            nextRectangles3 = new Rectangle[nextBrickData3.length][nextBrickData3[0].length];
+            initBrickPanel(nextRectangles3, nextBrickPanel3, nextBrickData3);
+        }
+    }
+
+    /**
+     * Get the data of the nth next brick
+     */
+    private int[][] getNextBrickNData(int n) {
+        // Get real brick data from game controller
+        Board board = eventListener.getBoard();
+        if (board!=null) {
+            //GameBoard gameBoard = (GameBoard) board;
+            return board.getNextBrickData(n);
+        }
+        // If unable to get, return default data
+        return new int[4][4];
+    }
+
 //    /**
 //     * Initializes the next-block preview area
 //     * @param nextBrickData
@@ -270,10 +313,13 @@ public class GuiController implements Initializable {
      * Add a method to update preview
      * @param nextBrickData
      */
-    private void updateNextBrickPreview(int[][] nextBrickData) {
-        for (int i = 0; i < nextBrickData.length; i++) {
-            for (int j = 0; j < nextBrickData[i].length; j++) {
-                setRectangleData(nextBrickData[i][j], nextRectangles[i][j]);
+// overload the updateNextBrickPreview method to adapt to different rectangular arrays
+    private void updateNextBrickPreview(int[][] nextBrickData, Rectangle[][] rectangles) {
+        if (rectangles != null && nextBrickData != null) {
+            for (int i = 0; i < nextBrickData.length && i < rectangles.length; i++) {
+                for (int j = 0; j < nextBrickData[i].length && j < rectangles[i].length; j++) {
+                    setRectangleData(nextBrickData[i][j], rectangles[i][j]);
+                }
             }
         }
     }
@@ -298,6 +344,17 @@ public class GuiController implements Initializable {
         //return returnPaint;
     }
 
+/**
+     * Updates the next-block preview area with the latest brick data
+     * @param brick the ViewData object containing brick position, data and next brick data
+     */
+    private void updateThreeNextBrickPreviews(ViewData brick) {
+        // update NextBrick Preview
+        updateNextBrickPreview(brick.getNextBrickData(), nextRectangles1);
+        updateNextBrickPreview(getNextBrickNData(2), nextRectangles2);
+        updateNextBrickPreview(getNextBrickNData(3), nextRectangles3);
+    }
+
     /**
      * Refreshes the brick display position and data
      * @param brick the ViewData object containing brick position, data and next brick data
@@ -312,7 +369,7 @@ public class GuiController implements Initializable {
                 }
             }
             // Update preview of the next-block
-            updateNextBrickPreview(brick.getNextBrickData());
+            updateThreeNextBrickPreviews(brick);
         }
     }
     /**

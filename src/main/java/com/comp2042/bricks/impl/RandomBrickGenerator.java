@@ -4,10 +4,7 @@ import com.comp2042.bricks.Brick;
 import com.comp2042.bricks.BrickGenerator;
 import com.comp2042.bricks.impl.shapes.*;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -33,6 +30,27 @@ public class RandomBrickGenerator implements BrickGenerator {
         nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
         //nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
     }
+/**
+ * Returns a brick from the list at a specific position
+ * @param position the position of the brick in the list
+ * @return the brick at the specified position
+ */
+    @Override
+    public Brick getNextBrick(int position) {
+        // Ensure there are enough bricks in the queue
+        while (nextBricks.size() < position) {
+            nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+        }
+
+        // Obtain the brick at the specified position
+        Iterator<Brick> iterator = nextBricks.iterator();
+        Brick result = null;
+        for (int i = 0; i < position && iterator.hasNext(); i++) {
+            result = iterator.next();
+        }
+        return result;
+    }
+
     /**
      * Returns a random brick from the list
      * @return a random brick

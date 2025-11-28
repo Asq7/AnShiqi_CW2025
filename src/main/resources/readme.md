@@ -3,10 +3,13 @@
 
 # 2.**Compilation Instructions:**
 编译说明：提供清晰的分步指南，说明如何编译代码生成应用程序，包括所需的依赖项或特殊设置。
+```
+mvn clean javafx:run
+```
 
 # 3.Implemented and Working Properly: 
 已实现且运行正常的功能：列出成功实现并按预期运行的功能，简要描述每项功能。
-## (1)Add preview feature增加预览功能 
+## <p style="text-indent:2em;">(1)Add preview feature增加预览功能 
 * brief description：Add a preview of the next block in the empty area at the top-left corner of the game screen.
 * Modified Java Classes：    
 GuiController.java: Add new member variables:nextBrickPanel,nextRectangles;
@@ -14,21 +17,21 @@ Add a method initNextBrickPreview to initialize the next-block preview;
 Add a method updateNextBrickPreview to update preview；
 calls the updateNextBrickPreview method with the next brick's data (brick.getNextBrickData()),to update the next-block preview.
     
-## (2)Add score calculation and display增加分数计算和显示功能
+## <p style="text-indent:2em;">(2)Add score calculation and display增加分数计算和显示功能
 * brief description：The original program could only show the added score but had no scoring function, so I added a feature to calculate the total score.
 * Modified Java Classes： 
 GuiController.java:import javafx.scene.control.Label to use;
 Add private Label scoreLabel;
 In the bindScore method, add a bind between the scoreLabel and integerProperty to enable real-time score updates.
-## (3)Add pause/resume functionality增加暂停pause/恢复resume功能
+## <p style="text-indent:2em;">(3)Add pause/resume functionality增加暂停pause/恢复resume功能
 * brief description：Add a pause/resume functionality to the game. Press the space or click the button can pause/resume the game.
 * Modified Java Classes：
 GuiController.java:import javafx.scene.control.Button to use; Add a button to the game screen; Add a method to the button to pause/resume the game.
-## (4)Add restart functionality(button)增加重新开始功能
+## <p style="text-indent:2em;">(4)Add restart functionality(button)增加重新开始功能
 * brief description：Add a clickable button：click to start a new game.(Initially there was no button, players can only press "N" to restart)
 * Modified Java Classes：
 GuiController.java: add: else if (keyEvent.getCode() == KeyCode.SPACE) { pauseGame(null);}
-## (5)Add level mode增加关卡模式
+## <p style="text-indent:2em;">(5)Add level mode增加关卡模式
 * When the accumulated score reaches a certain value, proceed to the next level (increase speed)累计分数到某个分值时，进入下一关（加快速度）
 * Modified Java Classes：
 GameScore.java:Add level-related logic to the GameScore class: level up when reach a certain score
@@ -78,11 +81,12 @@ rename class:
 - Refactor code in GuiController:   
 
   **1.DELETE CODE FOR REFLECTION：(I don't want reflection)**
+```java
   final Reflection reflection = new Reflection();
   reflection.setFraction(0.8);
   reflection.setTopOpacity(0.9);
   reflection.setTopOffset(-12);
-    
+  ```
   **2.modify Duplicate Code---logic of for loop**
 - Code Smell（原文）：
 - {Duplicate Code
@@ -99,6 +103,7 @@ rename class:
   • Pull Up Method: Move shared methods to a common superclass}
 
     ADD NEW METHOD initBrickPanel:
+```java
   private void initBrickPanel(Rectangle[][] rectangles,GridPane brickPanel ,int[][] brickData) {
   for (int i = 0; i < brickData.length; i++) {
   for (int j = 0; j < brickData[i].length; j++) {
@@ -109,7 +114,9 @@ rename class:
   }
   }
   }
+```
     TO REPLACE:
+```java
   private void initNextBrickPreview(int[][] nextBrickData) {
   nextRectangles = new Rectangle[nextBrickData.length][nextBrickData[0].length];
   for (int i = 0; i < nextBrickData.length; i++) {
@@ -121,7 +128,9 @@ rename class:
   }
   }
   }
+  ```
     AND REPLACE:
+```java
   for (int i = 0; i < brick.getBrickData().length; i++) {
   for (int j = 0; j < brick.getBrickData()[i].length; j++) {
   Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
@@ -129,16 +138,20 @@ rename class:
   rectangles[i][j] = rectangle;
   brickPanel.add(rectangle, j, i);
   }
-  }
+}
+```
 （ADD：initBrickPanel(rectangles, brickPanel, brick.getBrickData());）
 
   REPLACE:  
-- initNextBrickPreview(brick.getNextBrickData()); 
-- private void initNextBrickPreview(int[][] nextBrickData)
+```java
+initNextBrickPreview(brick.getNextBrickData()); 
+private void initNextBrickPreview(int[][] nextBrickData)
+```
   AS:  
+```java     
   nextRectangles = new Rectangle[brick.getNextBrickData().length][brick.getNextBrickData()[0].length];  
   initBrickPanel(nextRectangles, nextBrickPanel, brick.getNextBrickData());  
-
+```
 
   **3.modify Complex Conditionals---Long switch statements(getFillColor);**
   - Code Smell（原文）：
@@ -158,7 +171,8 @@ rename class:
     • Extract Method: Move conditional branches into descriptive methods}
   
 REPLACE:
-  -  Paint returnPaint;
+```java
+  Paint returnPaint;
      switch (i) {
      case 0:
      returnPaint = Color.TRANSPARENT;
@@ -189,7 +203,9 @@ REPLACE:
      break;
      }
      return returnPaint;
+```
   WITH:
+```java
      return switch (i) {
      case 0 -> Color.TRANSPARENT;
      case 1 -> Color.AQUA;
@@ -202,6 +218,7 @@ REPLACE:
      default -> Color.WHITE;
      };
      //return returnPaint;
+```
 
  **4.modify Long Method**    
 - Code Smell（原文）：
@@ -220,6 +237,7 @@ Refactoring Techniques:
 • Replace Temp with Query: Use descriptive methods instead of temporary variables.}
 
 REPLACE:
+```java
 public void initialize(URL location, ResourceBundle resources) {
 Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
 gamePanel.setFocusTraversable(true);
@@ -254,7 +272,8 @@ pauseGame(null);
 }
 });
 gameOverPanel.setVisible(false);
-
+```
+```java
 AS；
      @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -308,6 +327,7 @@ AS；
     private void initializeGameOverPanel() {
         gameOverPanel.setVisible(false);
     }
+```
 【The current initialize() method takes on excessive responsibilities. Split it into multiple smaller methods to improve readability and maintainability.
 Current Issues:The initialize() method encompasses several unrelated responsibilities:
 Loading font resources

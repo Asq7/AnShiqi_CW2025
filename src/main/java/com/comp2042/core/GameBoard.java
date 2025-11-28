@@ -119,14 +119,42 @@ public class GameBoard implements Board {
     public int[][] getBoardMatrix() {
         return currentGameMatrix;
     }
+
     /**
      * Gets view-related data for rendering the board
-     * @return a ViewData object containing display information
      */
     @Override
     public ViewData getViewData() {
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+        int[][] nextBrickData = new int[4][4];
+        if (brickGenerator instanceof RandomBrickGenerator) {
+            Brick nextBrick = ((RandomBrickGenerator) brickGenerator).getNextBrick(1);
+            if (nextBrick != null && !nextBrick.getShapeMatrix().isEmpty()) {
+                nextBrickData = nextBrick.getShapeMatrix().get(0);
+            }
+        }
+
+        return new ViewData(brickRotator.getCurrentShape(),
+                (int) currentOffset.getX(),
+                (int) currentOffset.getY(),
+                nextBrickData);
     }
+
+    /**
+     * Gets the next brick data for a specific position
+     * @param position the position of the next brick
+     * @return a 2D integer array representing the next brick
+     */
+    @Override
+    public int[][] getNextBrickData(int position) {
+        if (brickGenerator instanceof RandomBrickGenerator) {
+            Brick nextBrick = ((RandomBrickGenerator) brickGenerator).getNextBrick(position);
+            if (nextBrick != null && !nextBrick.getShapeMatrix().isEmpty()) {
+                return nextBrick.getShapeMatrix().get(0);
+            }
+        }
+        return new int[4][4];
+    }
+
     /**
      * Merges the current brick into the background grid
      */
