@@ -15,11 +15,6 @@
         </center>
     </BorderPane>
 
-    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel"/>
-        </VBox>
-    </Group>
 
     <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="85" layoutY="60"/>
     <Label fx:id="scoreLabelText" text="SCORE:" layoutX="15" layoutY="60" styleClass="scoreClass"/>
@@ -46,6 +41,12 @@
 
     <Label fx:id="levelLabel" text="1" layoutX="85" layoutY="30" styleClass="scoreClass"/>
     <Label fx:id="levelLabelText" text="LEVEL:" layoutX="15" layoutY="30" styleClass="scoreClass"/>
+
+    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+        <VBox alignment="CENTER">
+            <GameOverPanel fx:id="gameOverPanel"/>
+        </VBox>
+    </Group>
 
     <stylesheets>
         <URL value="@window_style.css"/>

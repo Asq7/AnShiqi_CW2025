@@ -42,8 +42,8 @@ Button {
     -fx-background-color: #4CAF50; /* Green */
     -fx-background-radius: 5;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 8 15;
+    -fx-font-size: 12px;
+    -fx-padding: 8 8;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 3);
 }
 
@@ -72,9 +72,11 @@ Button:hover {
 }
 
 .gameOverStyle {
-    -fx-font-family: "Let's go Digital";
-    -fx-font-size: 48;
-    -fx-background-color: red;
+    -fx-font-family: "Digital-7", "Let's go Digital", monospace;
+    -fx-font-size: 33px;
+    -fx-text-fill: #ff3d00;
+    -fx-effect: dropshadow(gaussian, rgba(255, 61, 0, 0.8), 20, 0.4, 0, 0);
+    -fx-font-weight: bold;
 }
 
 .scoreClass{
