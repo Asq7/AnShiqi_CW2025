@@ -9,6 +9,7 @@ import com.comp2042.model.MoveEvent;
 import com.comp2042.model.ViewData;
 import javafx.beans.property.IntegerProperty;
 
+
 /**
  * The controller class for the game
  * GameController handles game logic and acts as intermediary between model and view

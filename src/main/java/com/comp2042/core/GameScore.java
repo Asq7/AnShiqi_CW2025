@@ -48,5 +48,6 @@ public final class GameScore {
      */
     public void reset() {
         score.setValue(0);
+        level.set(1);
     }
 }
