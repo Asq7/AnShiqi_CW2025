@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -85,7 +84,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] displayMatrix;
 
-    private GameInputHandler eventListener;
+    private GameInputHandler gameInputHandler;
 
     private Rectangle[][] rectangles;
 
@@ -152,15 +151,15 @@ public class GuiController implements Initializable {
      */
     private void handleGameplayKeys(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-            refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+            refreshBrick(gameInputHandler.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-            refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+            refreshBrick(gameInputHandler.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-            refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+            refreshBrick(gameInputHandler.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
@@ -228,7 +227,7 @@ public class GuiController implements Initializable {
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
-        Board board=eventListener.getBoard();
+        Board board= gameInputHandler.getBoard();
         board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
             if (timeLine != null) {
                 timeLine.stop();
@@ -246,7 +245,7 @@ public class GuiController implements Initializable {
         timeLine.play();
 
 
-        eventListener.bindLevel(board.getScore().levelProperty());
+        gameInputHandler.bindLevel(board.getScore().levelProperty());
     }
 
     /**
@@ -281,33 +280,18 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Get the data of the nth next brick
+     * Retrieves the data for the next brick at a given index
+     * @param n the index of the next brick
+     * @return the 2D array representing the next brick data
      */
     private int[][] getNextBrickNData(int n) {
-        // Get real brick data from game controller
-        Board board = eventListener.getBoard();
-        if (board!=null) {
-            //GameBoard gameBoard = (GameBoard) board;
-            return board.getNextBrickData(n);
+        if (gameInputHandler != null) {
+            return gameInputHandler.getNextBrickData(n); // <-- 现在只和 eventListener 交互
         }
         // If unable to get, return default data
         return new int[4][4];
     }
 
-//    /**
-//     * Initializes the next-block preview area
-//     * @param nextBrickData
-//     */
-//    private void initNextBrickPreview(int[][] nextBrickData) {
-//        for (int i = 0; i < nextBrickData.length; i++) {
-//            for (int j = 0; j < nextBrickData[i].length; j++) {
-//                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-//                rectangle.setFill(getFillColor(nextBrickData[i][j]));
-//                nextRectangles[i][j] = rectangle;
-//                nextBrickPanel.add(rectangle, j, i);
-//            }
-//        }
-//    }//Duplicate Code
 
     /**
      * Add a method to update preview
@@ -400,7 +384,7 @@ public class GuiController implements Initializable {
      */
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = eventListener.onDownEvent(event);
+            DownData downData = gameInputHandler.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
@@ -412,10 +396,10 @@ public class GuiController implements Initializable {
     }
     /**
      * Sets the input event listener for handling user interactions
-     * @param eventListener the GameInputHandler to be set
+     * @param gameInputHandler the GameInputHandler to be set
      */
-    public void setEventListener(GameInputHandler eventListener) {
-        this.eventListener = eventListener;
+    public void setGameInputHandler(GameInputHandler gameInputHandler) {
+        this.gameInputHandler = gameInputHandler;
     }
 
     /**
@@ -444,7 +428,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
-        eventListener.createNewGame();
+        gameInputHandler.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
         isPause.setValue(Boolean.FALSE);

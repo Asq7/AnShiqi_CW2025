@@ -48,4 +48,6 @@ public interface GameInputHandler {
      * @param levelProperty The level property to bind
      */
     void bindLevel(IntegerProperty levelProperty);
+
+    int[][] getNextBrickData(int n);
 }

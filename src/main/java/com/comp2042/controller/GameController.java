@@ -22,7 +22,7 @@ public class GameController implements GameInputHandler {
     public GameController(GuiController c) {
         viewGuiController = c;
         board.createNewBrick();
-        viewGuiController.setEventListener(this);
+        viewGuiController.setGameInputHandler(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
@@ -104,5 +104,10 @@ public class GameController implements GameInputHandler {
     @Override
     public Board getBoard() {
         return board;
+    }
+
+    @Override
+    public int[][] getNextBrickData(int n) {
+        return board.getNextBrickData(n);
     }
 }
