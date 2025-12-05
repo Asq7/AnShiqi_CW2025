@@ -22,7 +22,7 @@ public class GameController implements GameInputHandler {
     public GameController(GuiController c) {
         viewGuiController = c;
         board.createNewBrick();
-        viewGuiController.setGameInputHandler(this);
+        viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }

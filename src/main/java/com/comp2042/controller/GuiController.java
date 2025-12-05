@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
  */
 public class GuiController implements Initializable {
 
+    private static final int HIDDEN_ROWS = 2;
     private static final int BRICK_SIZE = 20;
     private static final int BRICK_PANEL_Y_OFFSET = -42;
     private static final int INITIAL_SPEED = 700;
@@ -84,7 +85,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] displayMatrix;
 
-    private GameInputHandler gameInputHandler;
+    private GameInputHandler eventListener;
 
     private Rectangle[][] rectangles;
 
@@ -151,15 +152,15 @@ public class GuiController implements Initializable {
      */
     private void handleGameplayKeys(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-            refreshBrick(gameInputHandler.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+            refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-            refreshBrick(gameInputHandler.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+            refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-            refreshBrick(gameInputHandler.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+            refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
@@ -197,55 +198,56 @@ public class GuiController implements Initializable {
         }
     }
 
-    /**
-     * Initializes the game view by creating and setting up the game board and brick panels
-     * @param boardMatrix the 2D array representing the game board state
-     * @param brick the ViewData object containing current brick information
-     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
+        setupGameBoard(boardMatrix);
+        setupBrickPanels(brick);
+        setupGameLoop();
+        eventListener.bindLevel(eventListener.getBoard().getScore().levelProperty());
+    }
+
+    private void setupGameBoard(int[][] boardMatrix) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
-        for (int i = 2; i < boardMatrix.length; i++) {
+        for (int i = HIDDEN_ROWS; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 rectangle.setFill(Color.TRANSPARENT);
                 displayMatrix[i][j] = rectangle;
-                gamePanel.add(rectangle, j, i - 2);
+                gamePanel.add(rectangle, j, i - HIDDEN_ROWS);
             }
         }
+    }
 
+    private void setupBrickPanels(ViewData brick) {
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         initBrickPanel(rectangles, brickPanel, brick.getBrickData());
-
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
-
+        updateBrickPanelPosition(brick);
         initThreeNextBrickPreviews(brick);
+    }
 
-
+    private void setupGameLoop() {
         timeLine = new Timeline(new KeyFrame(
-                Duration.millis(INITIAL_SPEED), // LEVEL1 SPEED
+                Duration.millis(INITIAL_SPEED),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
-        Board board= gameInputHandler.getBoard();
-        board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
-            if (timeLine != null) {
-                timeLine.stop();
-                timeLine.getKeyFrames().clear();
 
-                // SPEED UP WITH LEVEL UP(MIN200ms)
-                    long speed = Math.max(MIN_SPEED, INITIAL_SPEED - (newValue.intValue()- 1) * SPEED_DECREMENT_PER_LEVEL);
-                timeLine.getKeyFrames().add(new KeyFrame(
-                        Duration.millis(speed),
-                        ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
-                ));
-                timeLine.play();
-            }
+        Board board = eventListener.getBoard();
+        board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
+            updateGameSpeed(newValue.intValue());
         });
         timeLine.play();
+    }
 
-
-        gameInputHandler.bindLevel(board.getScore().levelProperty());
+    private void updateGameSpeed(int newLevel) {
+        if (timeLine != null) {
+            timeLine.stop();
+            long speed = Math.max(MIN_SPEED, INITIAL_SPEED - (newLevel - 1) * SPEED_DECREMENT_PER_LEVEL);
+            timeLine.getKeyFrames().setAll(new KeyFrame(
+                    Duration.millis(speed),
+                    ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+            ));
+            timeLine.play();
+        }
     }
 
     /**
@@ -285,8 +287,8 @@ public class GuiController implements Initializable {
      * @return the 2D array representing the next brick data
      */
     private int[][] getNextBrickNData(int n) {
-        if (gameInputHandler != null) {
-            return gameInputHandler.getNextBrickData(n); // <-- 现在只和 eventListener 交互
+        if (eventListener != null) {
+            return eventListener.getNextBrickData(n); // <-- 现在只和 eventListener 交互
         }
         // If unable to get, return default data
         return new int[4][4];
@@ -345,8 +347,9 @@ public class GuiController implements Initializable {
      */
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            updateBrickPanelPosition(brick);
+            //brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+            //brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
@@ -356,6 +359,16 @@ public class GuiController implements Initializable {
             updateThreeNextBrickPreviews(brick);
         }
     }
+
+    /**
+     * Updates the brick panel position based on the brick's current position
+     * @param brick the ViewData object containing brick position, data and next brick data
+     */
+    private void updateBrickPanelPosition(ViewData brick) {
+        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        brickPanel.setLayoutY(BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+    }
+
     /**
      * Refreshes the game background display by updating each rectangle's data
      * @param board 2D array representing the game board state data
@@ -384,7 +397,7 @@ public class GuiController implements Initializable {
      */
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = gameInputHandler.onDownEvent(event);
+            DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
@@ -396,10 +409,10 @@ public class GuiController implements Initializable {
     }
     /**
      * Sets the input event listener for handling user interactions
-     * @param gameInputHandler the GameInputHandler to be set
+     * @param eventListener the GameInputHandler to be set
      */
-    public void setGameInputHandler(GameInputHandler gameInputHandler) {
-        this.gameInputHandler = gameInputHandler;
+    public void setEventListener(GameInputHandler eventListener) {
+        this.eventListener = eventListener;
     }
 
     /**
@@ -428,7 +441,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
-        gameInputHandler.createNewGame();
+        eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
