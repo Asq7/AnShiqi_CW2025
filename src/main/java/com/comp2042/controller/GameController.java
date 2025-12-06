@@ -8,7 +8,7 @@ import com.comp2042.model.EventSource;
 import com.comp2042.model.MoveEvent;
 import com.comp2042.model.ViewData;
 import javafx.beans.property.IntegerProperty;
-
+import com.comp2042.util.GameConfig;
 
 /**
  * The controller class for the game
@@ -16,7 +16,7 @@ import javafx.beans.property.IntegerProperty;
  */
 public class GameController implements GameInputHandler {
 
-    private Board board = new GameBoard(25, 10);
+    private Board board = new GameBoard(GameConfig.BOARD_WIDTH, GameConfig.BOARD_HEIGHT);
 
     private final GuiController viewGuiController;
 
