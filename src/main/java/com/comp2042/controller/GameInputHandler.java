@@ -33,6 +33,11 @@ public interface GameInputHandler {
      * @param event The MoveEvent containing event details
      * @return  ViewData containing view data
      */
+    /**
+     * Handles rotate event
+     * @param event The MoveEvent containing event details
+     * @return  ViewData containing view data
+     */
     ViewData onRotateEvent(MoveEvent event);
     /**
      * Creates a new game
@@ -49,5 +54,10 @@ public interface GameInputHandler {
      */
     void bindLevel(IntegerProperty levelProperty);
 
+    /**
+     * Gets the next brick data at the specified position in the queue
+     * @param n The position of the next brick in the queue
+     * @return The next brick data at the specified position
+     */
     int[][] getNextBrickData(int n);
 }

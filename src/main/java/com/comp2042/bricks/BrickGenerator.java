@@ -6,11 +6,12 @@ public interface BrickGenerator {
      * @return brick
      */
     Brick getBrick();
+
     /**
-     * Gets the next brick to be used in the game
-     * @return brick
+     * Gets the next brick to be used in the game at a specific position
+     * @param position the position of the brick in the queue
+     * @return the next brick at the specified position
      */
-    Brick getNextBrick();
     Brick getNextBrick(int position);
 }
 

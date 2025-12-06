@@ -39,6 +39,14 @@
                 <scope>test</scope>
             </dependency>
 
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>17.0.12</version>
+            <classifier>win</classifier>
+        </dependency>
+
+
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

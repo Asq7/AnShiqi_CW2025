@@ -40,7 +40,7 @@ public class GuiController implements Initializable {
     public Label scoreLabelText;
 
     @FXML
-    private GridPane gamePanel;
+    GridPane gamePanel;
 
     @FXML
     Group groupNotification;
@@ -64,12 +64,12 @@ public class GuiController implements Initializable {
     Button pauseButton;
     //add a button to new game
     @FXML
-    private Button newGameButton;
+    Button newGameButton;
 
     @FXML
     private Label levelLabel;
 
-    private Rectangle[][] nextRectangles;
+    Rectangle[][] nextRectangles;
     private Rectangle[][] nextRectangles1;
     private Rectangle[][] nextRectangles2;
     private Rectangle[][] nextRectangles3;
@@ -78,7 +78,7 @@ public class GuiController implements Initializable {
 
     private GameInputHandler eventListener;
 
-    private Rectangle[][] rectangles;
+    Rectangle[][] rectangles;
 
     GameTimer gameTimer;
 
@@ -87,7 +87,7 @@ public class GuiController implements Initializable {
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
     @FXML
-    private Label scoreLabel;
+    Label scoreLabel;
 
 
     /**
@@ -178,6 +178,9 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Binds the score property to the score label
+     */
     private void initBrickPanel(Rectangle[][] rectangles,GridPane brickPanel ,int[][] brickData) {
         for (int i = 0; i < brickData.length; i++) {
             for (int j = 0; j < brickData[i].length; j++) {
@@ -189,6 +192,11 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Initializes the game view with the given board matrix and brick data
+     * @param boardMatrix the board matrix
+     * @param brick the brick data
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         setupGameBoard(boardMatrix);
         setupBrickPanels(brick);
@@ -196,6 +204,10 @@ public class GuiController implements Initializable {
         eventListener.bindLevel(eventListener.getBoard().getScore().levelProperty());
     }
 
+    /**
+     * Setups the game board with the given board matrix
+     * @param boardMatrix the board matrix
+     */
     private void setupGameBoard(int[][] boardMatrix) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = GameConfig.HIDDEN_ROWS; i < boardMatrix.length; i++) {
@@ -208,6 +220,9 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Setups the brick panels with the given brick data
+     **/
     private void setupBrickPanels(ViewData brick) {
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         initBrickPanel(rectangles, brickPanel, brick.getBrickData());
@@ -215,15 +230,22 @@ public class GuiController implements Initializable {
         initThreeNextBrickPreviews(brick);
     }
 
+    /**
+     * Setups the game loop
+     */
     private void setupGameLoop() {
         gameTimer = new GameTimer(GameConfig.INITIAL_SPEED, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
         gameTimer.start();
     }
 
+    /**
+     * Updates the game speed based on the new level
+     * @param newLevel the new level
+     */
     private void updateGameSpeed(int newLevel) {
         long speed = Math.max(GameConfig.MIN_SPEED, GameConfig.INITIAL_SPEED - (newLevel - 1) * GameConfig.SPEED_DECREMENT_PER_LEVEL);
         gameTimer.setInterval(speed);
-        
+
     }
 
     /**
@@ -306,7 +328,7 @@ public class GuiController implements Initializable {
         //return returnPaint;
     }
 
-/**
+    /**
      * Updates the next-block preview area with the latest brick data
      * @param brick the ViewData object containing brick position, data and next brick data
      */
@@ -341,7 +363,7 @@ public class GuiController implements Initializable {
      * @param brick the ViewData object containing brick position, data and next brick data
      */
     private void updateBrickPanelPosition(ViewData brick) {
-        if (brickPanel != null || gamePanel == null) return;
+        if (brickPanel == null || gamePanel == null) return;
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConfig.BRICK_SIZE);
         brickPanel.setLayoutY(GameConfig.BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConfig.BRICK_SIZE);
     }
@@ -444,14 +466,26 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Gets the level label component
+     * @return the level label component
+     */
     public Label getLevelLabel() {
         return levelLabel;
     }
 
+    /**
+     * Sets the level label component
+     * @param levelLabel the level label component to be set
+     **/
     public void setLevelLabel(Label levelLabel) {
         this.levelLabel = levelLabel;
     }
 
+    /**
+     * Sets the score label component
+     * @param scoreLabel the score label component to be set
+     **/
     public void setScoreLabel(Label scoreLabel) {
         this.scoreLabel = scoreLabel;
     }

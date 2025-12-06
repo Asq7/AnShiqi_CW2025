@@ -16,10 +16,17 @@ import com.comp2042.util.GameConfig;
  */
 public class GameController implements GameInputHandler {
 
+    /**
+     * The board instance used for game logic
+     */
     private Board board = new GameBoard(GameConfig.BOARD_WIDTH, GameConfig.BOARD_HEIGHT);
 
     private final GuiController viewGuiController;
 
+    /**
+     * Constructs a new GameController with the specified view controller
+     * @param c The view controller to use
+     */
     public GameController(GuiController c) {
         viewGuiController = c;
         board.createNewBrick();
@@ -76,7 +83,7 @@ public class GameController implements GameInputHandler {
         return board.getViewData();
     }
     /**
-     * Handles the rotate movement event for the current brick
+     * Handles the rotated movement event for the current brick
      * @param event The MoveEvent containing event details
      * @return ViewData containing updated brick position and data
      */
@@ -102,11 +109,21 @@ public class GameController implements GameInputHandler {
     public void bindLevel(IntegerProperty levelProperty) {
         viewGuiController.bindLevel(levelProperty);
     }
+
+    /**
+     * Returns the current board instance
+     * @return The current board instance
+     */
     @Override
     public Board getBoard() {
         return board;
     }
 
+    /**
+     * Returns the next brick data at the specified position in the queue
+     * @param n The position of the next brick in the queue
+     * @return The next brick data at the specified position
+     */
     @Override
     public int[][] getNextBrickData(int n) {
         return board.getNextBrickData(n);

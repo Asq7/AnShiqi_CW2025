@@ -42,6 +42,10 @@ public class BrickRotator {
         currentShape = 0;
     }
 
+    /**
+     * Gets the current shape index
+     * @return the current shape index
+     */
     public int getCurrentShapeIndex() {
         return currentShape;
     }

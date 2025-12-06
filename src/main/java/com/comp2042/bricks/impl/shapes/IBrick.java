@@ -15,6 +15,9 @@ public final class IBrick implements Brick {
      */
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
+    /**
+     * Constructs an I-brick with its two rotation states
+     */
     public IBrick() {
         brickMatrix.add(new int[][]{
                 {0, 0, 0, 0},

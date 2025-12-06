@@ -66,8 +66,9 @@ public class RandomBrickGenerator implements BrickGenerator {
      * Returns the next brick in the queue
      * @return the next brick
      */
-    @Override
     public Brick getNextBrick() {
         return nextBricks.peek();
     }
 }
+
+

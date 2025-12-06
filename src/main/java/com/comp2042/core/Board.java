@@ -61,5 +61,10 @@ public interface Board {
      * Resets the board and starts a new game.
      */
     void newGame();
+    /**
+     * Gets the data for the next brick.
+     * @param position the position of the next brick.
+     * @return a 2D integer array representing the next brick.
+     */
     int[][] getNextBrickData(int position);
 }
