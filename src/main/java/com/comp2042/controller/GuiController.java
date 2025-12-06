@@ -25,6 +25,7 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.control.Label;
 import com.comp2042.util.GameConfig;
+import com.comp2042.util.GameTimer;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -83,7 +84,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] rectangles;
 
-    private Timeline timeLine;
+    private GameTimer gameTimer;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
@@ -219,29 +220,14 @@ public class GuiController implements Initializable {
     }
 
     private void setupGameLoop() {
-        timeLine = new Timeline(new KeyFrame(
-                Duration.millis(GameConfig.INITIAL_SPEED),
-                ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
-        ));
-        timeLine.setCycleCount(Timeline.INDEFINITE);
-
-        Board board = eventListener.getBoard();
-        board.getScore().levelProperty().addListener((observable, oldValue, newValue) -> {
-            updateGameSpeed(newValue.intValue());
-        });
-        timeLine.play();
+        gameTimer = new GameTimer(GameConfig.INITIAL_SPEED, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
+        gameTimer.start();
     }
 
     private void updateGameSpeed(int newLevel) {
-        if (timeLine != null) {
-            timeLine.stop();
-            long speed = Math.max(GameConfig.MIN_SPEED, GameConfig.INITIAL_SPEED - (newLevel - 1) * GameConfig.SPEED_DECREMENT_PER_LEVEL);
-            timeLine.getKeyFrames().setAll(new KeyFrame(
-                    Duration.millis(speed),
-                    ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
-            ));
-            timeLine.play();
-        }
+        long speed = Math.max(GameConfig.MIN_SPEED, GameConfig.INITIAL_SPEED - (newLevel - 1) * GameConfig.SPEED_DECREMENT_PER_LEVEL);
+        gameTimer.setInterval(speed);
+        
     }
 
     /**
@@ -423,7 +409,7 @@ public class GuiController implements Initializable {
      * Displays a game over a message and stops the game
      */
     public void gameOver() {
-        timeLine.stop();
+        gameTimer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
@@ -433,11 +419,11 @@ public class GuiController implements Initializable {
      * @param actionEvent the ActionEvent that triggered this method (can be null)
      */
     public void newGame(ActionEvent actionEvent) {
-        timeLine.stop();
+        gameTimer.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
-        timeLine.play();
+        gameTimer.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
@@ -449,12 +435,12 @@ public class GuiController implements Initializable {
 
         if (isPause.getValue()) {
             // pause
-            timeLine.play();
+            gameTimer.play();
             pauseButton.setText("PAUSE");
             isPause.setValue(Boolean.FALSE);
         } else {
             // RESUME
-            timeLine.pause();
+            gameTimer.pause();
             pauseButton.setText("RESUME");
             isPause.setValue(Boolean.TRUE);
         }
