@@ -1,11 +1,8 @@
 package com.comp2042.controller;
 
-import com.comp2042.core.Board;
 import com.comp2042.model.*;
 import com.comp2042.view.GameOverPanel;
 import com.comp2042.view.NotificationPanel;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,7 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.util.Duration;
 import javafx.scene.control.Label;
 import com.comp2042.util.GameConfig;
 import com.comp2042.util.GameTimer;
@@ -47,13 +43,13 @@ public class GuiController implements Initializable {
     private GridPane gamePanel;
 
     @FXML
-    private Group groupNotification;
+    Group groupNotification;
 
     @FXML
     private GridPane brickPanel;
 
     @FXML
-    private GameOverPanel gameOverPanel;
+    GameOverPanel gameOverPanel;
 
 
     @FXML
@@ -65,7 +61,7 @@ public class GuiController implements Initializable {
 
     // add a button to pause
     @FXML
-    private Button pauseButton;
+    Button pauseButton;
     //add a button to new game
     @FXML
     private Button newGameButton;
@@ -84,7 +80,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] rectangles;
 
-    private GameTimer gameTimer;
+    GameTimer gameTimer;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
@@ -145,7 +141,7 @@ public class GuiController implements Initializable {
     /**
      * Handles gameplay-related keyboard inputs
      */
-    private void handleGameplayKeys(KeyEvent keyEvent) {
+    void handleGameplayKeys(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
             refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
             keyEvent.consume();
@@ -266,7 +262,7 @@ public class GuiController implements Initializable {
      * @param n the index of the next brick
      * @return the 2D array representing the next brick data
      */
-    private int[][] getNextBrickNData(int n) {
+    int[][] getNextBrickNData(int n) {
         if (eventListener != null) {
             return eventListener.getNextBrickData(n); // <-- 现在只和 eventListener 交互
         }
@@ -345,6 +341,7 @@ public class GuiController implements Initializable {
      * @param brick the ViewData object containing brick position, data and next brick data
      */
     private void updateBrickPanelPosition(ViewData brick) {
+        if (brickPanel != null || gamePanel == null) return;
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConfig.BRICK_SIZE);
         brickPanel.setLayoutY(GameConfig.BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConfig.BRICK_SIZE);
     }
@@ -375,7 +372,7 @@ public class GuiController implements Initializable {
      * Handles the downward movement of the current brick and processes game logic
      * @param event the MoveEvent containing information about the source of the movement (user or thread)
      */
-    private void moveDown(MoveEvent event) {
+    void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
@@ -445,5 +442,17 @@ public class GuiController implements Initializable {
             isPause.setValue(Boolean.TRUE);
         }
         gamePanel.requestFocus();
+    }
+
+    public Label getLevelLabel() {
+        return levelLabel;
+    }
+
+    public void setLevelLabel(Label levelLabel) {
+        this.levelLabel = levelLabel;
+    }
+
+    public void setScoreLabel(Label scoreLabel) {
+        this.scoreLabel = scoreLabel;
     }
 }
