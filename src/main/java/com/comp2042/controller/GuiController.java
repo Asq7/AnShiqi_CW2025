@@ -175,6 +175,9 @@ public class GuiController implements Initializable {
     public void bindLevel(IntegerProperty levelProperty) {
         if (levelLabel != null) {
             levelLabel.textProperty().bind(levelProperty.asString());
+            levelProperty.addListener((obs, oldVal, newVal) -> {
+                updateGameSpeed(newVal.intValue());
+            });
         }
     }
 
