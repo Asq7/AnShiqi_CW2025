@@ -1,14 +1,14 @@
 package com.comp2042.bricks.impl.shapes;
 
 import com.comp2042.core.MatrixOperations;
-import com.comp2042.bricks.Brick;
+import com.comp2042.bricks.BrickInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 /**
  * Represents the Z-shaped brick
  */
-public class ZBrick implements Brick {
+public class ZBrick implements BrickInterface {
     /**
      * Initializes the Z-brick with its two rotation states
      */

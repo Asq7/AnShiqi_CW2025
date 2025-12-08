@@ -1,14 +1,13 @@
 package com.comp2042.controller;
 
-import com.comp2042.core.Board;
+import com.comp2042.core.GameBoardInterface;
 import com.comp2042.core.ClearRow;
 import com.comp2042.core.GameScore;
 import com.comp2042.model.*;
-import com.comp2042.util.GameTimer;
+import com.comp2042.util.GameTimerUtility;
 import com.comp2042.view.GameOverPanel;
 import com.comp2042.view.NextBricksPanel;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -19,7 +18,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,16 +40,16 @@ public class GuiControllerTest {
     private GuiController guiController;
 
     @Mock
-    private GameInputHandler mockEventListener;
+    private GameControllerInterface mockEventListener;
 
     @Mock
-    private Board mockBoard;
+    private GameBoardInterface mockGameBoardInterface;
 
     @Mock
     private GameScore mockScore;
 
     @Mock
-    private GameTimer mockTimer;
+    private GameTimerUtility mockTimer;
 
     @Mock
     private GameOverPanel mockGameOverPanel;
@@ -96,12 +94,12 @@ public class GuiControllerTest {
         isPauseField.set(guiController, new SimpleBooleanProperty(false));
 
         // Set up mock dependencies
-        guiController.gameTimer = mockTimer;
+        guiController.gameTimerUtility = mockTimer;
         guiController.setEventListener(mockEventListener);
 
         // Configure mock object behavior
-        when(mockEventListener.getBoard()).thenReturn(mockBoard);
-        when(mockBoard.getScore()).thenReturn(mockScore);
+        when(mockEventListener.getBoard()).thenReturn(mockGameBoardInterface);
+        when(mockGameBoardInterface.getScore()).thenReturn(mockScore);
 
         // Set up mock NextBricksPanel using reflection
         Field nextBricksPanelField = GuiController.class.getDeclaredField("nextBricksPanel");
@@ -161,8 +159,8 @@ public class GuiControllerTest {
         KeyEvent keyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.LEFT, false, false, false, false);
 
         // Mock event listener response
-        ViewData mockViewData = createMockViewData();
-        when(mockEventListener.onLeftEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        GameViewData mockGameViewData = createMockViewData();
+        when(mockEventListener.onLeftEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         // Handle method - ensure no exceptions thrown
         assertDoesNotThrow(() -> {
@@ -170,7 +168,7 @@ public class GuiControllerTest {
         });
 
         // Verify onLeftEvent was called
-        verify(mockEventListener).onLeftEvent(any(MoveEvent.class));
+        verify(mockEventListener).onLeftEvent(any(GameMoveEvent.class));
     }
 
     @Test
@@ -180,8 +178,8 @@ public class GuiControllerTest {
         KeyEvent keyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.RIGHT, false, false, false, false);
 
         // Mock event listener response
-        ViewData mockViewData = createMockViewData();
-        when(mockEventListener.onRightEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        GameViewData mockGameViewData = createMockViewData();
+        when(mockEventListener.onRightEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         // Handle method - ensure no exceptions thrown
         assertDoesNotThrow(() -> {
@@ -189,7 +187,7 @@ public class GuiControllerTest {
         });
 
         // Verify onRightEvent was called
-        verify(mockEventListener).onRightEvent(any(MoveEvent.class));
+        verify(mockEventListener).onRightEvent(any(GameMoveEvent.class));
     }
 
     @Test
@@ -199,8 +197,8 @@ public class GuiControllerTest {
         KeyEvent keyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.UP, false, false, false, false);
 
         // Mock event listener response
-        ViewData mockViewData = createMockViewData();
-        when(mockEventListener.onRotateEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        GameViewData mockGameViewData = createMockViewData();
+        when(mockEventListener.onRotateEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         // Handle method - ensure no exceptions thrown
         assertDoesNotThrow(() -> {
@@ -208,7 +206,7 @@ public class GuiControllerTest {
         });
 
         // Verify onRotateEvent was called
-        verify(mockEventListener).onRotateEvent(any(MoveEvent.class));
+        verify(mockEventListener).onRotateEvent(any(GameMoveEvent.class));
     }
 
     @Test
@@ -217,15 +215,15 @@ public class GuiControllerTest {
         // Create down arrow key event
         KeyEvent keyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.DOWN, false, false, false, false);
 
-        // Mock onDownEvent returning valid DownData object
-        DownData mockDownData = mock(DownData.class);
+        // Mock onDownEvent returning valid MoveResultData object
+        MoveResultData mockMoveResultData = mock(MoveResultData.class);
         ClearRow mockClearRow = mock(ClearRow.class);
-        ViewData mockViewData = createMockViewData();
+        GameViewData mockGameViewData = createMockViewData();
 
-        when(mockEventListener.onDownEvent(any(MoveEvent.class))).thenReturn(mockDownData);
-        when(mockDownData.getClearRow()).thenReturn(mockClearRow);
+        when(mockEventListener.onDownEvent(any(GameMoveEvent.class))).thenReturn(mockMoveResultData);
+        when(mockMoveResultData.getClearRow()).thenReturn(mockClearRow);
         when(mockClearRow.getLinesRemoved()).thenReturn(0); // Set to 0 to avoid showing score panel
-        when(mockDownData.getViewData()).thenReturn(mockViewData);
+        when(mockMoveResultData.getViewData()).thenReturn(mockGameViewData);
 
         // Handle method - ensure no exceptions thrown
         assertDoesNotThrow(() -> {
@@ -233,56 +231,56 @@ public class GuiControllerTest {
         });
 
         // Verify onDownEvent was called
-        verify(mockEventListener).onDownEvent(any(MoveEvent.class));
+        verify(mockEventListener).onDownEvent(any(GameMoveEvent.class));
     }
 
     @Test
     @DisplayName("Test WASD key handling")
     void testHandleGameplayKeys_WASD() {
-        // Create valid ViewData object for all movement operations
-        ViewData mockViewData = createMockViewData();
+        // Create valid GameViewData object for all movement operations
+        GameViewData mockGameViewData = createMockViewData();
 
         // Test W key (rotate)
         KeyEvent wKeyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.W, false, false, false, false);
-        when(mockEventListener.onRotateEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        when(mockEventListener.onRotateEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         assertDoesNotThrow(() -> {
             guiController.handleGameplayKeys(wKeyEvent);
         });
-        verify(mockEventListener).onRotateEvent(any(MoveEvent.class));
+        verify(mockEventListener).onRotateEvent(any(GameMoveEvent.class));
 
         // Test A key (move left)
         KeyEvent aKeyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.A, false, false, false, false);
-        when(mockEventListener.onLeftEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        when(mockEventListener.onLeftEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         assertDoesNotThrow(() -> {
             guiController.handleGameplayKeys(aKeyEvent);
         });
-        verify(mockEventListener).onLeftEvent(any(MoveEvent.class));
+        verify(mockEventListener).onLeftEvent(any(GameMoveEvent.class));
 
         // Test S key (move down) - need to set mock return value for onDownEvent
         KeyEvent sKeyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.S, false, false, false, false);
-        DownData mockDownData = mock(DownData.class);
+        MoveResultData mockMoveResultData = mock(MoveResultData.class);
         ClearRow mockClearRow = mock(ClearRow.class);
 
-        when(mockEventListener.onDownEvent(any(MoveEvent.class))).thenReturn(mockDownData);
-        when(mockDownData.getClearRow()).thenReturn(mockClearRow);
+        when(mockEventListener.onDownEvent(any(GameMoveEvent.class))).thenReturn(mockMoveResultData);
+        when(mockMoveResultData.getClearRow()).thenReturn(mockClearRow);
         when(mockClearRow.getLinesRemoved()).thenReturn(0); // Set to 0 to avoid showing score panel
-        when(mockDownData.getViewData()).thenReturn(mockViewData);
+        when(mockMoveResultData.getViewData()).thenReturn(mockGameViewData);
 
         assertDoesNotThrow(() -> {
             guiController.handleGameplayKeys(sKeyEvent);
         });
-        verify(mockEventListener).onDownEvent(any(MoveEvent.class));
+        verify(mockEventListener).onDownEvent(any(GameMoveEvent.class));
 
         // Test D key (move right)
         KeyEvent dKeyEvent = new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.D, false, false, false, false);
-        when(mockEventListener.onRightEvent(any(MoveEvent.class))).thenReturn(mockViewData);
+        when(mockEventListener.onRightEvent(any(GameMoveEvent.class))).thenReturn(mockGameViewData);
 
         assertDoesNotThrow(() -> {
             guiController.handleGameplayKeys(dKeyEvent);
         });
-        verify(mockEventListener).onRightEvent(any(MoveEvent.class));
+        verify(mockEventListener).onRightEvent(any(GameMoveEvent.class));
     }
 
     @Test
@@ -314,25 +312,25 @@ public class GuiControllerTest {
     @DisplayName("Test brick move down functionality")
     void testMoveDown() {
         // Create move down event
-        MoveEvent moveEvent = new MoveEvent(EventType.DOWN, EventSource.THREAD);
+        GameMoveEvent gameMoveEvent = new GameMoveEvent(GameEventType.DOWN, EventSource.THREAD);
 
         // Mock response data
-        ViewData mockViewData = createMockViewData();
-        DownData mockDownData = mock(DownData.class);
+        GameViewData mockGameViewData = createMockViewData();
+        MoveResultData mockMoveResultData = mock(MoveResultData.class);
         ClearRow mockClearRow = mock(ClearRow.class);
 
-        when(mockEventListener.onDownEvent(moveEvent)).thenReturn(mockDownData);
-        when(mockDownData.getClearRow()).thenReturn(mockClearRow);
+        when(mockEventListener.onDownEvent(gameMoveEvent)).thenReturn(mockMoveResultData);
+        when(mockMoveResultData.getClearRow()).thenReturn(mockClearRow);
         when(mockClearRow.getLinesRemoved()).thenReturn(2);
         when(mockClearRow.getScoreBonus()).thenReturn(200);
-        when(mockDownData.getViewData()).thenReturn(mockViewData);
+        when(mockMoveResultData.getViewData()).thenReturn(mockGameViewData);
 
         // Handle method
-        guiController.moveDown(moveEvent);
+        guiController.moveDown(gameMoveEvent);
 
         // Verify method calls
-        verify(mockEventListener).onDownEvent(moveEvent);
-        verify(mockDownData, times(3)).getClearRow();
+        verify(mockEventListener).onDownEvent(gameMoveEvent);
+        verify(mockMoveResultData, times(3)).getClearRow();
         verify(mockClearRow).getLinesRemoved();
         verify(mockClearRow).getScoreBonus();
     }
@@ -424,7 +422,7 @@ public class GuiControllerTest {
     @DisplayName("Test event listener setting with NextBricksPanel")
     void testSetEventListenerWithNextBricksPanel() {
         // Create new event listener
-        GameInputHandler newEventListener = mock(GameInputHandler.class);
+        GameControllerInterface newEventListener = mock(GameControllerInterface.class);
 
         // Set event listener
         guiController.setEventListener(newEventListener);
@@ -435,11 +433,11 @@ public class GuiControllerTest {
     }
 
     /**
-     * Helper method: Create Mock ViewData object with valid data
-     * @return Mock ViewData object with valid brick data
+     * Helper method: Create Mock GameViewData object with valid data
+     * @return Mock GameViewData object with valid brick data
      */
-    private ViewData createMockViewData() {
-        ViewData mockViewData = mock(ViewData.class);
+    private GameViewData createMockViewData() {
+        GameViewData mockGameViewData = mock(GameViewData.class);
 
         // Create valid brick data (4x4 array)
         int[][] brickData = {
@@ -458,11 +456,11 @@ public class GuiControllerTest {
         };
 
         // Set up mock behavior
-        when(mockViewData.getBrickData()).thenReturn(brickData);
-        when(mockViewData.getNextBrickData()).thenReturn(nextBrickData);
-        when(mockViewData.getxPosition()).thenReturn(5);
-        when(mockViewData.getyPosition()).thenReturn(10);
+        when(mockGameViewData.getBrickData()).thenReturn(brickData);
+        when(mockGameViewData.getNextBrickData()).thenReturn(nextBrickData);
+        when(mockGameViewData.getxPosition()).thenReturn(5);
+        when(mockGameViewData.getyPosition()).thenReturn(10);
 
-        return mockViewData;
+        return mockGameViewData;
     }
 }

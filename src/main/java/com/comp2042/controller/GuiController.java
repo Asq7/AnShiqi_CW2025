@@ -6,7 +6,7 @@ import com.comp2042.view.GameOverPanel;
 import com.comp2042.view.NextBricksPanel;
 import com.comp2042.view.NotificationPanel;
 import com.comp2042.util.GameConfig;
-import com.comp2042.util.GameTimer;
+import com.comp2042.util.GameTimerUtility;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -51,11 +51,11 @@ public class GuiController implements Initializable {
     @FXML Label scoreLabel;
 
     private Rectangle[][] displayMatrix;
-    private GameInputHandler eventListener;
+    private GameControllerInterface eventListener;
     Rectangle[][] rectangles;
     private NextBricksPanel nextBricksPanel; // New: NextBricksPanel instance
 
-    GameTimer gameTimer;
+    GameTimerUtility gameTimerUtility;
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
@@ -116,19 +116,19 @@ public class GuiController implements Initializable {
      */
     void handleGameplayKeys(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-            refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+            refreshBrick(eventListener.onLeftEvent(new GameMoveEvent(GameEventType.LEFT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-            refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+            refreshBrick(eventListener.onRightEvent(new GameMoveEvent(GameEventType.RIGHT, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-            refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+            refreshBrick(eventListener.onRotateEvent(new GameMoveEvent(GameEventType.ROTATE, EventSource.USER)));
             keyEvent.consume();
         }
         if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-            moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+            moveDown(new GameMoveEvent(GameEventType.DOWN, EventSource.USER));
             keyEvent.consume();
         }
     }
@@ -169,10 +169,10 @@ public class GuiController implements Initializable {
 
     /**
      * Initialize the game view with the given board matrix and brick data
-     * @param boardMatrix Board matrix
-     * @param brick Brick data
+     * @param boardMatrix GameBoardInterface matrix
+     * @param brick BrickInterface data
      */
-    public void initGameView(int[][] boardMatrix, ViewData brick) {
+    public void initGameView(int[][] boardMatrix, GameViewData brick) {
         setupGameBoard(boardMatrix);
         setupBrickPanels(brick);
         setupGameLoop();
@@ -186,7 +186,7 @@ public class GuiController implements Initializable {
 
     /**
      * Set up the game board with the given board matrix
-     * @param boardMatrix Board matrix
+     * @param boardMatrix GameBoardInterface matrix
      */
     private void setupGameBoard(int[][] boardMatrix) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
@@ -203,7 +203,7 @@ public class GuiController implements Initializable {
     /**
      * Set up brick panels with the given brick data
      */
-    private void setupBrickPanels(ViewData brick) {
+    private void setupBrickPanels(GameViewData brick) {
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         initBrickPanel(rectangles, brickPanel, brick.getBrickData());
         updateBrickPanelPosition(brick);
@@ -213,8 +213,8 @@ public class GuiController implements Initializable {
      * Set up the game loop
      */
     private void setupGameLoop() {
-        gameTimer = new GameTimer(GameConfig.INITIAL_SPEED, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
-        gameTimer.start();
+        gameTimerUtility = new GameTimerUtility(GameConfig.INITIAL_SPEED, () -> moveDown(new GameMoveEvent(GameEventType.DOWN, EventSource.THREAD)));
+        gameTimerUtility.start();
     }
 
     /**
@@ -223,14 +223,14 @@ public class GuiController implements Initializable {
      */
     private void updateGameSpeed(int newLevel) {
         long speed = Math.max(GameConfig.MIN_SPEED, GameConfig.INITIAL_SPEED - (newLevel - 1) * GameConfig.SPEED_DECREMENT_PER_LEVEL);
-        gameTimer.setInterval(speed);
+        gameTimerUtility.setInterval(speed);
     }
 
     /**
      * Refresh brick display position and data
-     * @param brick ViewData object containing brick position, data, and next brick data
+     * @param brick GameViewData object containing brick position, data, and next brick data
      */
-    private void refreshBrick(ViewData brick) {
+    private void refreshBrick(GameViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             updateBrickPanelPosition(brick);
 
@@ -248,9 +248,9 @@ public class GuiController implements Initializable {
 
     /**
      * Update brick panel position based on current brick position
-     * @param brick ViewData object containing brick position, data, and next brick data
+     * @param brick GameViewData object containing brick position, data, and next brick data
      */
-    private void updateBrickPanelPosition(ViewData brick) {
+    private void updateBrickPanelPosition(GameViewData brick) {
         if (brickPanel == null || gamePanel == null) return;
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * GameConfig.BRICK_SIZE);
         brickPanel.setLayoutY(GameConfig.BRICK_PANEL_Y_OFFSET + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * GameConfig.BRICK_SIZE);
@@ -281,26 +281,26 @@ public class GuiController implements Initializable {
 
     /**
      * Handle downward movement of current brick and process game logic
-     * @param event MoveEvent containing movement source information (user or thread)
+     * @param event GameMoveEvent containing movement source information (user or thread)
      */
-    void moveDown(MoveEvent event) {
+    void moveDown(GameMoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = eventListener.onDownEvent(event);
-            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
+            MoveResultData moveResultData = eventListener.onDownEvent(event);
+            if (moveResultData.getClearRow() != null && moveResultData.getClearRow().getLinesRemoved() > 0) {
+                NotificationPanel notificationPanel = new NotificationPanel("+" + moveResultData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
                 notificationPanel.showScore(groupNotification.getChildren());
             }
-            refreshBrick(downData.getViewData());
+            refreshBrick(moveResultData.getViewData());
         }
         gamePanel.requestFocus();
     }
 
     /**
      * Set the input event listener for handling user interactions
-     * @param eventListener GameInputHandler to set
+     * @param eventListener GameControllerInterface to set
      */
-    public void setEventListener(GameInputHandler eventListener) {
+    public void setEventListener(GameControllerInterface eventListener) {
         this.eventListener = eventListener;
         // Also set event listener for NextBricksPanel
         if (nextBricksPanel != null) {
@@ -322,7 +322,7 @@ public class GuiController implements Initializable {
      * Display game over message and stop the game
      */
     public void gameOver() {
-        gameTimer.stop();
+        gameTimerUtility.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
@@ -332,11 +332,11 @@ public class GuiController implements Initializable {
      * @param actionEvent ActionEvent that triggered this method (can be null)
      */
     public void newGame(ActionEvent actionEvent) {
-        gameTimer.stop();
+        gameTimerUtility.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
-        gameTimer.play();
+        gameTimerUtility.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
@@ -348,12 +348,12 @@ public class GuiController implements Initializable {
     public void pauseGame(ActionEvent actionEvent) {
         if (isPause.getValue()) {
             // Pause
-            gameTimer.play();
+            gameTimerUtility.play();
             pauseButton.setText("PAUSE");
             isPause.setValue(Boolean.FALSE);
         } else {
             // Resume
-            gameTimer.pause();
+            gameTimerUtility.pause();
             pauseButton.setText("RESUME");
             isPause.setValue(Boolean.TRUE);
         }

@@ -1,29 +1,29 @@
 package com.comp2042.core;
 
-import com.comp2042.bricks.Brick;
+import com.comp2042.bricks.BrickInterface;
 import com.comp2042.model.NextShapeInfo;
 /**
  * Utility class responsible for rotating bricks and managing their shapes
  */
 public class BrickRotator {
 
-    private Brick brick;
+    private BrickInterface brickInterface;
     private int currentShape = 0;
     /**
-     * Gets the next shape information for the brick
+     * Gets the next shape information for the brickInterface
      * @return NextShapeInfo object containing the next shape matrix and shape index
      */
     public NextShapeInfo getNextShape() {
         int nextShape = currentShape;
-        nextShape = (++nextShape) % brick.getShapeMatrix().size();
-        return new NextShapeInfo(brick.getShapeMatrix().get(nextShape), nextShape);
+        nextShape = (++nextShape) % brickInterface.getShapeMatrix().size();
+        return new NextShapeInfo(brickInterface.getShapeMatrix().get(nextShape), nextShape);
     }
     /**
      * Gets the current shape matrix
      * @return 2D integer array representing the current shape
      */
     public int[][] getCurrentShape() {
-        return brick.getShapeMatrix().get(currentShape);
+        return brickInterface.getShapeMatrix().get(currentShape);
     }
     /**
      * Sets the current shape index
@@ -34,11 +34,11 @@ public class BrickRotator {
     }
 
     /**
-     * Sets the brick and resets the current shape index to 0
-     * @param brick the brick object to set
+     * Sets the brickInterface and resets the current shape index to 0
+     * @param brickInterface the brickInterface object to set
      */
-    public void setBrick(Brick brick) {
-        this.brick = brick;
+    public void setBrick(BrickInterface brickInterface) {
+        this.brickInterface = brickInterface;
         currentShape = 0;
     }
 

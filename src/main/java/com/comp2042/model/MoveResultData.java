@@ -4,17 +4,17 @@ import com.comp2042.core.ClearRow;
 /**
  * Data class that holds information about the result of a down movement event
  */
-public final class DownData {
+public final class MoveResultData {
     private final ClearRow clearRow;
-    private final ViewData viewData;
+    private final GameViewData gameViewData;
     /**
-     * Constructs a DownData object with the specified clear row and view data
+     * Constructs a MoveResultData object with the specified clear row and view data
      * @param clearRow the ClearRow object containing row clearing information
-     * @param viewData the ViewData object containing display information
+     * @param gameViewData the GameViewData object containing display information
      */
-    public DownData(ClearRow clearRow, ViewData viewData) {
+    public MoveResultData(ClearRow clearRow, GameViewData gameViewData) {
         this.clearRow = clearRow;
-        this.viewData = viewData;
+        this.gameViewData = gameViewData;
     }
 
     /**
@@ -26,9 +26,9 @@ public final class DownData {
     }
     /**
      * Gets the view data information
-     * @return the ViewData object containing display information
+     * @return the GameViewData object containing display information
      */
-    public ViewData getViewData() {
-        return viewData;
+    public GameViewData getViewData() {
+        return gameViewData;
     }
 }

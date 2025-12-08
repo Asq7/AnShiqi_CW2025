@@ -7,7 +7,7 @@ import javafx.util.Duration;
 /**
  * Game timer utility class, encapsulating the creation and control of Timeline
  */
-public class GameTimer {
+public class GameTimerUtility {
     private Timeline timeline;
     private Runnable onTick;
 
@@ -16,7 +16,7 @@ public class GameTimer {
      * @param intervalMillis interval in milliseconds
      * @param onTick callback function to be called on each tick
      */
-    public GameTimer(long intervalMillis, Runnable onTick) {
+    public GameTimerUtility(long intervalMillis, Runnable onTick) {
         this.onTick = onTick;
         timeline = new Timeline(new KeyFrame(
                 Duration.millis(intervalMillis),

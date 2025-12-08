@@ -1,6 +1,6 @@
 package com.comp2042.core;
 
-import com.comp2042.bricks.Brick;
+import com.comp2042.bricks.BrickInterface;
 import com.comp2042.model.NextShapeInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,15 +9,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class BrickRotatorTest {
+class BrickInterfaceRotatorTest {
 
     private BrickRotator brickRotator;
-    private Brick mockBrick;
+    private BrickInterface mockBrickInterface;
 
     @BeforeEach
     void setUp() {
         brickRotator = new BrickRotator();
-        mockBrick = mock(Brick.class);
+        mockBrickInterface = mock(BrickInterface.class);
     }
 
     @Test
@@ -28,10 +28,10 @@ class BrickRotatorTest {
                 new int[][]{{1, 1, 1, 1}}
         );
 
-        when(mockBrick.getShapeMatrix()).thenReturn(shapeMatrixList);
+        when(mockBrickInterface.getShapeMatrix()).thenReturn(shapeMatrixList);
 
         // Act
-        brickRotator.setBrick(mockBrick);
+        brickRotator.setBrick(mockBrickInterface);
 
         // Assert
         assertEquals(0, brickRotator.getCurrentShapeIndex()); // Assuming getter is added
@@ -43,8 +43,8 @@ class BrickRotatorTest {
         int[][] expectedShape = {{1, 1}, {1, 1}};
         List<int[][]> shapeMatrixList = Arrays.asList(new int[][][]{expectedShape});
 
-        when(mockBrick.getShapeMatrix()).thenReturn(shapeMatrixList);
-        brickRotator.setBrick(mockBrick);
+        when(mockBrickInterface.getShapeMatrix()).thenReturn(shapeMatrixList);
+        brickRotator.setBrick(mockBrickInterface);
 
         // Act
         int[][] actualShape = brickRotator.getCurrentShape();
@@ -60,8 +60,8 @@ class BrickRotatorTest {
         int[][] shape2 = {{1, 1, 1, 1}};
         List<int[][]> shapeMatrixList = Arrays.asList(shape1, shape2);
 
-        when(mockBrick.getShapeMatrix()).thenReturn(shapeMatrixList);
-        brickRotator.setBrick(mockBrick);
+        when(mockBrickInterface.getShapeMatrix()).thenReturn(shapeMatrixList);
+        brickRotator.setBrick(mockBrickInterface);
 
         // Act
         NextShapeInfo nextShapeInfo = brickRotator.getNextShape();
@@ -78,8 +78,8 @@ class BrickRotatorTest {
         int[][] shape2 = {{1, 1, 1, 1}};
         List<int[][]> shapeMatrixList = Arrays.asList(shape1, shape2);
 
-        when(mockBrick.getShapeMatrix()).thenReturn(shapeMatrixList);
-        brickRotator.setBrick(mockBrick);
+        when(mockBrickInterface.getShapeMatrix()).thenReturn(shapeMatrixList);
+        brickRotator.setBrick(mockBrickInterface);
         brickRotator.setCurrentShape(1); // Set to last shape
 
         // Act

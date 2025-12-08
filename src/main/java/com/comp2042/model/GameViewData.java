@@ -4,20 +4,20 @@ import com.comp2042.core.MatrixOperations;
 /**
  * Represents view data for rendering the game board including current brick and next brick information
  */
-public final class ViewData {
+public final class GameViewData {
 
     private final int[][] brickData;
     private final int xPosition;
     private final int yPosition;
     private final int[][] nextBrickData;
     /**
-     * Constructs a ViewData object with the specified brick data, position, and next brick data
+     * Constructs a GameViewData object with the specified brick data, position, and next brick data
      * @param brickData the current brick's shape data
      * @param xPosition the x-coordinate position of the current brick
      * @param yPosition the y-coordinate position of the current brick
      * @param nextBrickData the next brick's shape data for preview
      */
-    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData) {
+    public GameViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;

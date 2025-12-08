@@ -1,18 +1,12 @@
 package com.comp2042.controller;
 
-import com.comp2042.controller.GameController;
-
-import com.comp2042.controller.GuiController;
-import com.comp2042.model.DownData;
-import com.comp2042.model.EventSource;
-import com.comp2042.model.MoveEvent;
-import com.comp2042.model.ViewData;
+import com.comp2042.model.*;
+import com.comp2042.model.GameMoveEvent;
 import javafx.beans.property.IntegerProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import com.comp2042.model.EventType;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,16 +28,16 @@ class GameControllerTest {
     void testConstructorInitializesGame() {
         // Verify that the GUI controller's methods are called during initialization
         verify(guiController).setEventListener(gameController);
-        verify(guiController).initGameView(any(int[][].class), any(ViewData.class));
+        verify(guiController).initGameView(any(int[][].class), any(GameViewData.class));
         verify(guiController).bindScore(any(IntegerProperty.class));
     }
 
     @Test
     void testOnDownEventWithValidMove() {
-        MoveEvent event = new MoveEvent(EventType.DOWN, EventSource.USER);
+        GameMoveEvent event = new GameMoveEvent(GameEventType.DOWN, EventSource.USER);
 
         // Execute the down event
-        DownData result = gameController.onDownEvent(event);
+        MoveResultData result = gameController.onDownEvent(event);
 
         // Verify that the result is not null
         assertNotNull(result);
@@ -53,18 +47,18 @@ class GameControllerTest {
 
     @Test
     void testOnLeftEvent() {
-        MoveEvent event = new MoveEvent(EventType.LEFT, EventSource.USER);
+        GameMoveEvent event = new GameMoveEvent(GameEventType.LEFT, EventSource.USER);
 
-        ViewData result = gameController.onLeftEvent(event);
+        GameViewData result = gameController.onLeftEvent(event);
 
         assertNotNull(result);
     }
 
     @Test
     void testOnRightEvent() {
-        MoveEvent event = new MoveEvent(EventType.RIGHT, EventSource.USER);
+        GameMoveEvent event = new GameMoveEvent(GameEventType.RIGHT, EventSource.USER);
 
-        ViewData result = gameController.onRightEvent(event);
+        GameViewData result = gameController.onRightEvent(event);
 
         assertNotNull(result);
     }
@@ -73,9 +67,9 @@ class GameControllerTest {
 
     @Test
     void testOnRotateEvent() {
-        MoveEvent event = new MoveEvent(EventType.ROTATE, EventSource.USER);
+        GameMoveEvent event = new GameMoveEvent(GameEventType.ROTATE, EventSource.USER);
 
-        ViewData result = gameController.onRotateEvent(event);
+        GameViewData result = gameController.onRotateEvent(event);
 
         assertNotNull(result);
     }

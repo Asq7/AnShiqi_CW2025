@@ -1,7 +1,7 @@
 package com.comp2042.view;
 
-import com.comp2042.controller.GameInputHandler;
-import com.comp2042.model.ViewData;
+import com.comp2042.controller.GameControllerInterface;
+import com.comp2042.model.GameViewData;
 import com.comp2042.util.ColorUtility;
 import com.comp2042.util.GameConfig;
 import javafx.scene.layout.GridPane;
@@ -14,7 +14,7 @@ public class NextBricksPanel {
 
     private final GridPane[] previewPanels;
     private final Rectangle[][][] previewRectangles;
-    private GameInputHandler eventListener;
+    private GameControllerInterface eventListener;
 
     /**
      * Constructs a NextBricksPanel with the specified preview panels
@@ -28,9 +28,9 @@ public class NextBricksPanel {
 
     /**
      * Set the input event listener for handling user interactions with the preview panels
-     * @param eventListener the GameInputHandler object to handle user input events
+     * @param eventListener the GameControllerInterface object to handle user input events
      */
-    public void setEventListener(GameInputHandler eventListener) {
+    public void setEventListener(GameControllerInterface eventListener) {
         this.eventListener = eventListener;
     }
 
@@ -44,10 +44,10 @@ public class NextBricksPanel {
     }
 
     /**
-     * Initialize the three next brick previews with the given ViewData
-     * @param brick the ViewData object containing the next brick data
+     * Initialize the three next brick previews with the given GameViewData
+     * @param brick the GameViewData object containing the next brick data
      */
-    public void initThreeNextBrickPreviews(ViewData brick) {
+    public void initThreeNextBrickPreviews(GameViewData brick) {
         for (GridPane panel : previewPanels) {
             panel.getChildren().clear();
         }
@@ -72,10 +72,10 @@ public class NextBricksPanel {
     }
 
     /**
-     * Update the three next brick previews with the given ViewData
-     * @param brick the ViewData object containing the next brick data
+     * Update the three next brick previews with the given GameViewData
+     * @param brick the GameViewData object containing the next brick data
      */
-    public void updateThreeNextBrickPreviews(ViewData brick) {
+    public void updateThreeNextBrickPreviews(GameViewData brick) {
         // 更新下一个方块预览
         updateNextBrickPreview(brick.getNextBrickData(), previewRectangles[0]);
         updateNextBrickPreview(getNextBrickNData(2), previewRectangles[1]);

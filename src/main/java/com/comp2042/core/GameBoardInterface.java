@@ -1,10 +1,11 @@
 package com.comp2042.core;
 
-import com.comp2042.model.ViewData;
+import com.comp2042.model.GameViewData;
+
 /**
  * Represents the game board
  */
-public interface Board {
+public interface GameBoardInterface {
     /**
      * Moves the current brick down by one unit.
      * @return true if the move was successful, false otherwise.
@@ -39,9 +40,9 @@ public interface Board {
 
     /**
      * Gets view-related data for rendering the board.
-     * @return a {@link ViewData} object containing display information.
+     * @return a {@link GameViewData} object containing display information.
      */
-    ViewData getViewData();
+    GameViewData getViewData();
     /**
      * Merges the current brick into the background grid.
      */
