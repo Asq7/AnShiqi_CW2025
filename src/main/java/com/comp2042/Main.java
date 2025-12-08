@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Main extends Application {
+public class    Main extends Application {
     /**
      * The main entry point for the application.
      * @param primaryStage The primary stage for this application, onto which the application scene can be set.
