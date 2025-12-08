@@ -1,94 +1,131 @@
 package com.comp2042.controller;
 
 import com.comp2042.core.ClearRow;
-import com.comp2042.core.Board;
-import com.comp2042.core.GameBoard;
-import com.comp2042.model.DownData;
+import com.comp2042.core.GameBoardInterface;
+import com.comp2042.core.GameGameBoardInterface;
+import com.comp2042.model.GameViewData;
+import com.comp2042.model.MoveResultData;
 import com.comp2042.model.EventSource;
-import com.comp2042.model.MoveEvent;
-import com.comp2042.model.ViewData;
+import com.comp2042.model.GameMoveEvent;
+import javafx.beans.property.IntegerProperty;
+import com.comp2042.util.GameConfig;
+
 /**
  * The controller class for the game
  * GameController handles game logic and acts as intermediary between model and view
  */
-public class GameController implements GameInputHandler {
+public class GameController implements GameControllerInterface {
 
-    private Board board = new GameBoard(25, 10);
+    /**
+     * The gameBoardInterface instance used for game logic
+     */
+    private GameBoardInterface gameBoardInterface = new GameGameBoardInterface(GameConfig.BOARD_WIDTH, GameConfig.BOARD_HEIGHT);
 
     private final GuiController viewGuiController;
 
+    /**
+     * Constructs a new GameController with the specified view controller
+     * @param c The view controller to use
+     */
     public GameController(GuiController c) {
         viewGuiController = c;
-        board.createNewBrick();
+        gameBoardInterface.createNewBrick();
         viewGuiController.setEventListener(this);
-        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.initGameView(gameBoardInterface.getBoardMatrix(), gameBoardInterface.getViewData());
+        viewGuiController.bindScore(gameBoardInterface.getScore().scoreProperty());
     }
     /**
      * Handles the down movement event for the current brick
-     * @param event The MoveEvent containing event details
-     * @return DownData containing clear row information and view data
+     * @param event The GameMoveEvent containing event details
+     * @return MoveResultData containing clear row information and view data
      */
     @Override
-    public DownData onDownEvent(MoveEvent event) {
-        boolean canMove = board.moveBrickDown();
+    public MoveResultData onDownEvent(GameMoveEvent event) {
+        boolean canMove = gameBoardInterface.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
-            board.mergeBrickToBackground();
-            clearRow = board.clearRows();
+            gameBoardInterface.mergeBrickToBackground();
+            clearRow = gameBoardInterface.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
+                gameBoardInterface.getScore().add(clearRow.getScoreBonus());
             }
-            if (board.createNewBrick()) {
+            if (gameBoardInterface.createNewBrick()) {
                 viewGuiController.gameOver();
             }
 
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            viewGuiController.refreshGameBackground(gameBoardInterface.getBoardMatrix());
 
         } else {
             if (event.getEventSource() == EventSource.USER) {
-                board.getScore().add(1);
+                gameBoardInterface.getScore().add(1);
             }
         }
-        return new DownData(clearRow, board.getViewData());
+        return new MoveResultData(clearRow, gameBoardInterface.getViewData());
     }
     /**
      * Handles the left movement event for the current brick
-     * @param event The MoveEvent containing event details
-     * @return ViewData containing updated brick position and data
+     * @param event The GameMoveEvent containing event details
+     * @return GameViewData containing updated brick position and data
      */
     @Override
-    public ViewData onLeftEvent(MoveEvent event) {
-        board.moveBrickLeft();
-        return board.getViewData();
+    public GameViewData onLeftEvent(GameMoveEvent event) {
+        gameBoardInterface.moveBrickLeft();
+        return gameBoardInterface.getViewData();
     }
     /**
      * Handles the right movement event for the current brick
-     * @param event The MoveEvent containing event details
-     * @return ViewData containing updated brick position and data
+     * @param event The GameMoveEvent containing event details
+     * @return GameViewData containing updated brick position and data
      */
     @Override
-    public ViewData onRightEvent(MoveEvent event) {
-        board.moveBrickRight();
-        return board.getViewData();
+    public GameViewData onRightEvent(GameMoveEvent event) {
+        gameBoardInterface.moveBrickRight();
+        return gameBoardInterface.getViewData();
     }
     /**
-     * Handles the rotate movement event for the current brick
-     * @param event The MoveEvent containing event details
-     * @return ViewData containing updated brick position and data
+     * Handles the rotated movement event for the current brick
+     * @param event The GameMoveEvent containing event details
+     * @return GameViewData containing updated brick position and data
      */
     @Override
-    public ViewData onRotateEvent(MoveEvent event) {
-        board.rotateLeftBrick();
-        return board.getViewData();
+    public GameViewData onRotateEvent(GameMoveEvent event) {
+        gameBoardInterface.rotateLeftBrick();
+        return gameBoardInterface.getViewData();
     }
 
     /**
-     * Creates a new game by resetting the board state
+     * Creates a new game by resetting the gameBoardInterface state
      */
     @Override
     public void createNewGame() {
-        board.newGame();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        gameBoardInterface.newGame();
+        viewGuiController.refreshGameBackground(gameBoardInterface.getBoardMatrix());
+    }
+    /**
+     * Binds the level property to the view controller
+     * @param levelProperty The level property to bind
+     */
+    @Override
+    public void bindLevel(IntegerProperty levelProperty) {
+        viewGuiController.bindLevel(levelProperty);
+    }
+
+    /**
+     * Returns the current gameBoardInterface instance
+     * @return The current gameBoardInterface instance
+     */
+    @Override
+    public GameBoardInterface getBoard() {
+        return gameBoardInterface;
+    }
+
+    /**
+     * Returns the next brick data at the specified position in the queue
+     * @param n The position of the next brick in the queue
+     * @return The next brick data at the specified position
+     */
+    @Override
+    public int[][] getNextBrickData(int n) {
+        return gameBoardInterface.getNextBrickData(n);
     }
 }

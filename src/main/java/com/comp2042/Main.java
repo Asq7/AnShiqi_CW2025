@@ -11,8 +11,11 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Main extends Application {
-
+public class    Main extends Application {
+    /**
+     * The main entry point for the application.
+     * @param primaryStage The primary stage for this application, onto which the application scene can be set.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -23,13 +26,20 @@ public class Main extends Application {
         GuiController c = fxmlLoader.getController();
 
         primaryStage.setTitle("TetrisJFX");
-        Scene scene = new Scene(root, 300, 510);
+        Scene scene = new Scene(root, 340, 510);
         primaryStage.setScene(scene);
+
+        // Disable the maximize button of the window.
+        primaryStage.setResizable(false);
+
         primaryStage.show();
         new GameController(c);
     }
 
-
+    /**
+     * The entry point of the application.
+     * @param args The command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         launch(args);
     }

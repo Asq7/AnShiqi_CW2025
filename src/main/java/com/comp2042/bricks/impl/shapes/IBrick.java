@@ -1,7 +1,7 @@
 package com.comp2042.bricks.impl.shapes;
 
+import com.comp2042.bricks.BrickInterface;
 import com.comp2042.core.MatrixOperations;
-import com.comp2042.bricks.Brick;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +9,15 @@ import java.util.List;
 /**
  * Represents the I-shaped brick
  */
-public final class IBrick implements Brick {
+public final class IBrick implements BrickInterface {
     /**
      * Initializes the I-brick with its two rotation states
      */
     private final List<int[][]> brickMatrix = new ArrayList<>();
 
+    /**
+     * Constructs an I-brick with its two rotation states
+     */
     public IBrick() {
         brickMatrix.add(new int[][]{
                 {0, 0, 0, 0},

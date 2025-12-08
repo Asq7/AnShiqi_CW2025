@@ -1,34 +1,33 @@
 package com.comp2042.core;
 
-import com.comp2042.bricks.Brick;
-import com.comp2042.bricks.BrickGenerator;
-import com.comp2042.bricks.impl.RandomBrickGenerator;
+import com.comp2042.bricks.BrickInterface;
+import com.comp2042.bricks.BrickGeneratorInterface;
+import com.comp2042.model.GameViewData;
 import com.comp2042.model.NextShapeInfo;
-import com.comp2042.model.ViewData;
 
 import java.awt.*;
 /**
  * Implementation of the game board
  */
-public class GameBoard implements Board {
+public class GameGameBoardInterface implements GameBoardInterface {
 
     private final int width;
     private final int height;
-    private final BrickGenerator brickGenerator;
+    private final BrickGeneratorInterface brickGeneratorInterface;
     private final BrickRotator brickRotator;
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final GameScore gameScore;
     /**
-     * Constructs a GameBoard with the specified width and height
+     * Constructs a GameGameBoardInterface with the specified width and height
      * @param width the width of the game board
      * @param height the height of the game board
      */
-    public GameBoard(int width, int height) {
+    public GameGameBoardInterface(int width, int height) {
         this.width = width;
         this.height = height;
         currentGameMatrix = new int[width][height];
-        brickGenerator = new RandomBrickGenerator();
+        brickGeneratorInterface = new com.comp2042.bricks.impl.BrickGeneratorInterface();
         brickRotator = new BrickRotator();
         gameScore = new GameScore();
     }
@@ -106,8 +105,8 @@ public class GameBoard implements Board {
      */
     @Override
     public boolean createNewBrick() {
-        Brick currentBrick = brickGenerator.getBrick();
-        brickRotator.setBrick(currentBrick);
+        BrickInterface currentBrickInterface = brickGeneratorInterface.getBrick();
+        brickRotator.setBrick(currentBrickInterface);
         currentOffset = new Point(4, 10);
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
@@ -119,14 +118,42 @@ public class GameBoard implements Board {
     public int[][] getBoardMatrix() {
         return currentGameMatrix;
     }
+
     /**
      * Gets view-related data for rendering the board
-     * @return a ViewData object containing display information
      */
     @Override
-    public ViewData getViewData() {
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+    public GameViewData getViewData() {
+        int[][] nextBrickData = new int[4][4];
+        if (brickGeneratorInterface instanceof com.comp2042.bricks.impl.BrickGeneratorInterface) {
+            BrickInterface nextBrickInterface = ((com.comp2042.bricks.impl.BrickGeneratorInterface) brickGeneratorInterface).getNextBrick(1);
+            if (nextBrickInterface != null && !nextBrickInterface.getShapeMatrix().isEmpty()) {
+                nextBrickData = nextBrickInterface.getShapeMatrix().get(0);
+            }
+        }
+
+        return new GameViewData(brickRotator.getCurrentShape(),
+                (int) currentOffset.getX(),
+                (int) currentOffset.getY(),
+                nextBrickData);
     }
+
+    /**
+     * Gets the next brick data for a specific position
+     * @param position the position of the next brick
+     * @return a 2D integer array representing the next brick
+     */
+    @Override
+    public int[][] getNextBrickData(int position) {
+        if (brickGeneratorInterface instanceof com.comp2042.bricks.impl.BrickGeneratorInterface) {
+            BrickInterface nextBrickInterface = ((com.comp2042.bricks.impl.BrickGeneratorInterface) brickGeneratorInterface).getNextBrick(position);
+            if (nextBrickInterface != null && !nextBrickInterface.getShapeMatrix().isEmpty()) {
+                return nextBrickInterface.getShapeMatrix().get(0);
+            }
+        }
+        return new int[4][4];
+    }
+
     /**
      * Merges the current brick into the background grid
      */

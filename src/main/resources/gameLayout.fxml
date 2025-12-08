@@ -15,18 +15,38 @@
         </center>
     </BorderPane>
 
+
+    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="85" layoutY="60"/>
+    <Label fx:id="scoreLabelText" text="SCORE:" layoutX="15" layoutY="60" styleClass="scoreClass"/>
+
+
+
+    <VBox layoutX="240" layoutY="1" spacing="5">
+        <children>
+            <Label text="NEXT" styleClass="nextBrickLabel" alignment="CENTER"/>
+            <!-- 为整个预览区域添加外框 -->
+            <Pane styleClass="nextBrickInterface">
+                <VBox spacing="5" style="-fx-padding: 5;">
+                    <GridPane fx:id="nextBrickPanel1" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                    <GridPane fx:id="nextBrickPanel2" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                    <GridPane fx:id="nextBrickPanel3" hgap="1" vgap="1" prefHeight="80" prefWidth="80"/>
+                </VBox>
+            </Pane>
+        </children>
+    </VBox>
+
+    <Button fx:id="pauseButton" text="PAUSE" layoutX="235" layoutY="380" onAction="#pauseGame" prefWidth="100" prefHeight="30"/>
+
+    <Button fx:id="newGameButton" text="NEW GAME" layoutX="235" layoutY="420" onAction="#newGame" prefWidth="100" prefHeight="30"/>
+
+    <Label fx:id="levelLabel" text="1" layoutX="85" layoutY="30" styleClass="scoreClass"/>
+    <Label fx:id="levelLabelText" text="LEVEL:" layoutX="15" layoutY="30" styleClass="scoreClass"/>
+
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>
     </Group>
-
-    <Label fx:id="scoreLabel" styleClass="scoreClass" layoutX="150" layoutY="20"/>
-
-
-    <VBox layoutX="12" layoutY="11">
-        <GridPane fx:id="nextBrickPanel" styleClass="nextBrick" hgap="1" vgap="1" prefHeight="100" prefWidth="100"/>
-    </VBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>

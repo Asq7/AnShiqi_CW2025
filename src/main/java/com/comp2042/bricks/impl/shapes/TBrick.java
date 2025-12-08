@@ -1,14 +1,14 @@
 package com.comp2042.bricks.impl.shapes;
 
+import com.comp2042.bricks.BrickInterface;
 import com.comp2042.core.MatrixOperations;
-import com.comp2042.bricks.Brick;
 
 import java.util.ArrayList;
 import java.util.List;
 /**
  * Represents the T-shaped brick
  */
-public class TBrick implements Brick {
+public class TBrick implements BrickInterface {
 
     private final List<int[][]> brickMatrix = new ArrayList<>();
     /**

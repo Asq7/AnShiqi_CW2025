@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * defines the interface for accessing the brick's shape data
  */
-public interface Brick {
+public interface BrickInterface {
 
     /**
      * Gets all possible rotation states of the brick as a list of matrices.

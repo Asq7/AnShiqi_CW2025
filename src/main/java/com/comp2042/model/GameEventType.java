@@ -1,5 +1,5 @@
 package com.comp2042.model;
 
-public enum EventType {
+public enum GameEventType {
     DOWN, LEFT, RIGHT, ROTATE
 }
