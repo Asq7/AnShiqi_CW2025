@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Randomly generates bricks for the game
  */
-public class BrickGeneratorInterface implements com.comp2042.bricks.BrickGeneratorInterface {
+public class BrickGenerator implements com.comp2042.bricks.BrickGeneratorInterface {
 
     private final List<BrickInterface> brickInterfaceList;
 
@@ -17,7 +17,7 @@ public class BrickGeneratorInterface implements com.comp2042.bricks.BrickGenerat
     /**
      * Constructor: initializes the list of bricks
      */
-    public BrickGeneratorInterface() {
+    public BrickGenerator() {
         brickInterfaceList = new ArrayList<>();
         brickInterfaceList.add(new IBrick());
         brickInterfaceList.add(new JBrick());
