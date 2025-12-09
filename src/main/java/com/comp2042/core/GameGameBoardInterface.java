@@ -2,6 +2,7 @@ package com.comp2042.core;
 
 import com.comp2042.bricks.BrickInterface;
 import com.comp2042.bricks.BrickGeneratorInterface;
+import com.comp2042.bricks.impl.BrickGenerator;
 import com.comp2042.model.GameViewData;
 import com.comp2042.model.NextShapeInfo;
 
@@ -27,7 +28,7 @@ public class GameGameBoardInterface implements GameBoardInterface {
         this.width = width;
         this.height = height;
         currentGameMatrix = new int[width][height];
-        brickGeneratorInterface = new com.comp2042.bricks.impl.BrickGeneratorInterface();
+        brickGeneratorInterface = new BrickGenerator();
         brickRotator = new BrickRotator();
         gameScore = new GameScore();
     }
@@ -125,8 +126,8 @@ public class GameGameBoardInterface implements GameBoardInterface {
     @Override
     public GameViewData getViewData() {
         int[][] nextBrickData = new int[4][4];
-        if (brickGeneratorInterface instanceof com.comp2042.bricks.impl.BrickGeneratorInterface) {
-            BrickInterface nextBrickInterface = ((com.comp2042.bricks.impl.BrickGeneratorInterface) brickGeneratorInterface).getNextBrick(1);
+        if (brickGeneratorInterface instanceof BrickGenerator) {
+            BrickInterface nextBrickInterface = ((BrickGenerator) brickGeneratorInterface).getNextBrick(1);
             if (nextBrickInterface != null && !nextBrickInterface.getShapeMatrix().isEmpty()) {
                 nextBrickData = nextBrickInterface.getShapeMatrix().get(0);
             }
@@ -145,8 +146,8 @@ public class GameGameBoardInterface implements GameBoardInterface {
      */
     @Override
     public int[][] getNextBrickData(int position) {
-        if (brickGeneratorInterface instanceof com.comp2042.bricks.impl.BrickGeneratorInterface) {
-            BrickInterface nextBrickInterface = ((com.comp2042.bricks.impl.BrickGeneratorInterface) brickGeneratorInterface).getNextBrick(position);
+        if (brickGeneratorInterface instanceof BrickGenerator) {
+            BrickInterface nextBrickInterface = ((BrickGenerator) brickGeneratorInterface).getNextBrick(position);
             if (nextBrickInterface != null && !nextBrickInterface.getShapeMatrix().isEmpty()) {
                 return nextBrickInterface.getShapeMatrix().get(0);
             }
